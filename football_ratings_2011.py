@@ -88,11 +88,11 @@ def build_id_to_classname(team_to_class, schools_csv=SCHOOLS_CSV):
         "479": "University Academy Charter",
         "204": "Van Horn",
         "206": "Vashon",
-        "20": "Appleton City"
-        "275": "Drexel"
-        "575": "Renaissance Academy"
-        "578": "Rock Bridge"
-        "172": "St. James"
+        "20": "Appleton City",
+        "275": "Drexel",
+        "575": "Renaissance Academy",
+        "578": "Rock Bridge",
+        "172": "St. James",
     }
  
     df = pd.read_csv(schools_csv)
