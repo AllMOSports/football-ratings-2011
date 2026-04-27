@@ -88,10 +88,10 @@ def build_id_to_classname(team_to_class, schools_csv=SCHOOLS_CSV):
         "479": "University Academy Charter",
         "204": "Van Horn",
         "206": "Vashon",
-        "20": "Appleton City",
-        "275": "Drexel",
-        "575": "Renaissance Academy",
-        "578": "Rock Bridge",
+        "20": "Appleton City with Montrose",
+        "275": "Drexel with Miami (Amoret)",
+        "575": "Renaissance Academy Charter",
+        "578": "Rock Bridge with Columbia Independent",
         "172": "St. James",
     }
  
