@@ -466,7 +466,7 @@ def save_class_jsons(off_rating, def_rating, ovr_rating, league_avg,
             print(f"  Class {cls}: no teams found — skipping.")
             continue
  
-        path = f"football_ratings_2010_class{cls}.json"
+        path = f"football_ratings_2011_class{cls}.json"
         output = {
             "last_updated":   datetime.now().strftime("%B %d, %Y at %I:%M %p"),
             "league_average": round(league_avg, 2),
@@ -488,7 +488,7 @@ def save_class_jsons(off_rating, def_rating, ovr_rating, league_avg,
 # ---------------------------------------------------------------------------
  
 if __name__ == "__main__":
-    print("=== MSHSAA Football Ratings 2010 ===")
+    print("=== MSHSAA Football Ratings 2011 ===")
  
     print("\nLoading classifications...")
     team_to_class, team_to_district = load_classifications()
