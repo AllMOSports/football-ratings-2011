@@ -1,5 +1,5 @@
 {
-  "last_updated": "April 27, 2026 at 02:30 PM",
+  "last_updated": "April 27, 2026 at 02:41 PM",
   "league_average": 25.43,
   "teams": [
     {
@@ -103,9 +103,9 @@
     },
     {
       "ovr_rank": 10,
-      "school": "Rock Bridge",
-      "classification": null,
-      "district": null,
+      "school": "Rock Bridge with Columbia Independent",
+      "classification": 6,
+      "district": 7,
       "ovr_rating": 65.47,
       "off_rating": 31.43,
       "off_rank": 14,
@@ -884,17 +884,6 @@
     },
     {
       "ovr_rank": 81,
-      "school": "Branson",
-      "classification": 5,
-      "district": 8,
-      "ovr_rating": 19.94,
-      "off_rating": 10.5,
-      "off_rank": 80,
-      "def_rating": 9.44,
-      "def_rank": 92
-    },
-    {
-      "ovr_rank": 82,
       "school": "Lee's Summit",
       "classification": 5,
       "district": 9,
@@ -903,6 +892,17 @@
       "off_rank": 104,
       "def_rating": 13.34,
       "def_rank": 73
+    },
+    {
+      "ovr_rank": 82,
+      "school": "Branson",
+      "classification": 5,
+      "district": 8,
+      "ovr_rating": 19.94,
+      "off_rating": 10.5,
+      "off_rank": 80,
+      "def_rating": 9.44,
+      "def_rank": 92
     },
     {
       "ovr_rank": 83,
@@ -1423,9 +1423,9 @@
     },
     {
       "ovr_rank": 130,
-      "school": "Drexel",
-      "classification": null,
-      "district": null,
+      "school": "Drexel with Miami (Amoret)",
+      "classification": 1,
+      "district": 8,
       "ovr_rating": 4.83,
       "off_rating": -0.53,
       "off_rank": 148,
@@ -1599,17 +1599,6 @@
     },
     {
       "ovr_rank": 146,
-      "school": "Parkview",
-      "classification": 5,
-      "district": 7,
-      "ovr_rating": 1.75,
-      "off_rating": -4.69,
-      "off_rank": 181,
-      "def_rating": 6.44,
-      "def_rank": 108
-    },
-    {
-      "ovr_rank": 147,
       "school": "Holden",
       "classification": 3,
       "district": 12,
@@ -1618,6 +1607,17 @@
       "off_rank": 110,
       "def_rating": -3.53,
       "def_rank": 178
+    },
+    {
+      "ovr_rank": 147,
+      "school": "Parkview",
+      "classification": 5,
+      "district": 7,
+      "ovr_rating": 1.75,
+      "off_rating": -4.69,
+      "off_rank": 181,
+      "def_rating": 6.44,
+      "def_rank": 108
     },
     {
       "ovr_rank": 148,
@@ -1907,9 +1907,9 @@
     },
     {
       "ovr_rank": 174,
-      "school": "Renaissance Academy",
-      "classification": null,
-      "district": null,
+      "school": "Renaissance Academy Charter",
+      "classification": 3,
+      "district": 14,
       "ovr_rating": -5.45,
       "off_rating": -0.9,
       "off_rank": 154,
@@ -2369,17 +2369,6 @@
     },
     {
       "ovr_rank": 216,
-      "school": "El Dorado Springs",
-      "classification": 2,
-      "district": 8,
-      "ovr_rating": -18.43,
-      "off_rating": -8.56,
-      "off_rank": 210,
-      "def_rating": -9.87,
-      "def_rank": 231
-    },
-    {
-      "ovr_rank": 217,
       "school": "Archie",
       "classification": 1,
       "district": 7,
@@ -2388,6 +2377,17 @@
       "off_rank": 225,
       "def_rating": -7.47,
       "def_rank": 204
+    },
+    {
+      "ovr_rank": 217,
+      "school": "El Dorado Springs",
+      "classification": 2,
+      "district": 8,
+      "ovr_rating": -18.43,
+      "off_rating": -8.56,
+      "off_rank": 210,
+      "def_rating": -9.87,
+      "def_rank": 231
     },
     {
       "ovr_rank": 218,
@@ -2710,17 +2710,6 @@
     },
     {
       "ovr_rank": 247,
-      "school": "Louisiana",
-      "classification": 1,
-      "district": 9,
-      "ovr_rating": -27.49,
-      "off_rating": -16.33,
-      "off_rank": 257,
-      "def_rating": -11.16,
-      "def_rank": 241
-    },
-    {
-      "ovr_rank": 248,
       "school": "Potosi",
       "classification": 4,
       "district": 2,
@@ -2729,6 +2718,17 @@
       "off_rank": 259,
       "def_rating": -10.72,
       "def_rank": 238
+    },
+    {
+      "ovr_rank": 248,
+      "school": "Louisiana",
+      "classification": 1,
+      "district": 9,
+      "ovr_rating": -27.49,
+      "off_rating": -16.33,
+      "off_rank": 257,
+      "def_rating": -11.16,
+      "def_rank": 241
     },
     {
       "ovr_rank": 249,
@@ -3491,17 +3491,6 @@
     },
     {
       "ovr_rank": 318,
-      "school": "Wright City",
-      "classification": 3,
-      "district": 5,
-      "ovr_rating": -76.67,
-      "off_rating": -47.83,
-      "off_rank": 326,
-      "def_rating": -28.84,
-      "def_rank": 309
-    },
-    {
-      "ovr_rank": 319,
       "school": "Van-Far",
       "classification": 1,
       "district": 9,
@@ -3510,6 +3499,17 @@
       "off_rank": 321,
       "def_rating": -36.01,
       "def_rank": 320
+    },
+    {
+      "ovr_rank": 319,
+      "school": "Wright City",
+      "classification": 3,
+      "district": 5,
+      "ovr_rating": -76.67,
+      "off_rating": -47.83,
+      "off_rank": 326,
+      "def_rating": -28.84,
+      "def_rank": 309
     },
     {
       "ovr_rank": 320,
@@ -3546,9 +3546,9 @@
     },
     {
       "ovr_rank": 323,
-      "school": "Appleton City",
-      "classification": null,
-      "district": null,
+      "school": "Appleton City with Montrose",
+      "classification": 1,
+      "district": 7,
       "ovr_rating": -81.76,
       "off_rating": -41.99,
       "off_rank": 324,

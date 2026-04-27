@@ -25,7 +25,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-08-26,Brentwood,21,Crystal City,35
 2011-08-26,Ste. Genevieve,6,Dexter,28
 2011-08-26,Lockwood with Golden City,48,Diamond,6
-2011-08-26,Appleton City,6,Drexel,49
+2011-08-26,Appleton City with Montrose,6,Drexel with Miami (Amoret),49
 2011-08-26,Hayti,40,East Prairie,10
 2011-08-26,Richmond,48,Excelsior Springs,26
 2011-08-26,Farmington,34,Festus,9
@@ -38,7 +38,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-08-26,Joplin,37,Glendale,50
 2011-08-26,Platte County,49,Grain Valley,7
 2011-08-26,Harrisonville,12,Helias Catholic,16
-2011-08-26,Rock Bridge,33,Hickman,27
+2011-08-26,Rock Bridge with Columbia Independent,33,Hickman,27
 2011-08-26,Marshfield,40,Hollister,14
 2011-08-26,Francis Howell,53,Holt,17
 2011-08-26,Cabool,21,Houston,6
@@ -123,7 +123,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-08-26,Center,35,University Academy Charter,20
 2011-08-26,Parkway West,47,University City,33
 2011-08-26,Principia,6,Valle Catholic,54
-2011-08-26,Renaissance Academy,14,Van Horn,19
+2011-08-26,Renaissance Academy Charter,14,Van Horn,19
 2011-08-26,Knob Noster,7,Versailles,42
 2011-08-26,St. Charles,27,Warrenton,40
 2011-08-26,Aurora,55,Warsaw,8
@@ -141,7 +141,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-02,Archie,22,Adrian,21
 2011-09-02,Priory,27,Affton,6
 2011-09-02,Crest Ridge,47,Albany,18
-2011-09-02,Midway,57,Appleton City,0
+2011-09-02,Midway,57,Appleton City with Montrose,0
 2011-09-02,Willow Springs,20,Ava,34
 2011-09-02,Truman,27,Belton,3
 2011-09-02,Cardinal Ritter,49,Bishop DuBourg,7
@@ -238,7 +238,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-02,Excelsior Springs,14,Savannah,49
 2011-09-02,St. Vincent,6,Scott City,27
 2011-09-02,Parkway Central,42,Seckman,0
-2011-09-02,Drexel,33,Sherwood,14
+2011-09-02,Drexel with Miami (Amoret),33,Sherwood,14
 2011-09-02,Fair Grove,38,Skyline,12
 2011-09-02,Santa Fe,62,Slater,6
 2011-09-02,Ladue Horton Watkins,27,SLUH,49
@@ -272,11 +272,11 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-03,McCluer,7,McCluer North,28
 2011-09-03,Winfield,26,Missouri Military Academy,0
 2011-09-03,John Burroughs,59,Principia,0
-2011-09-03,Rock Bridge,62,Riverview Gardens,12
+2011-09-03,Rock Bridge with Columbia Independent,62,Riverview Gardens,12
 2011-09-06,Normandy Collaborative,6,Jennings,20
 2011-09-08,William Chrisman,20,Liberty North,47
-2011-09-09,Drexel,30,Adrian,7
-2011-09-09,Sherwood,54,Appleton City,24
+2011-09-09,Drexel with Miami (Amoret),30,Adrian,7
+2011-09-09,Sherwood,54,Appleton City with Montrose,24
 2011-09-09,Tipton,48,Archie,7
 2011-09-09,McAuley Catholic with New Heights Christian,6,Ash Grove,48
 2011-09-09,Lincoln College Prep,0,Benton,45
@@ -371,7 +371,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-09,Lee's Summit,6,Raytown South,38
 2011-09-09,Logan-Rogersville,48,Reeds Spring,0
 2011-09-09,Neosho,8,Republic,13
-2011-09-09,Hazelwood Central,3,Rock Bridge,40
+2011-09-09,Hazelwood Central,3,Rock Bridge with Columbia Independent,40
 2011-09-09,Blue Springs South,3,Rockhurst,16
 2011-09-09,Schuyler County,0,Salisbury,45
 2011-09-09,St. Paul Lutheran (Concordia),0,Santa Fe,10
@@ -409,7 +409,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-10,Belton,19,Winnetonka,38
 2011-09-15,Bishop LeBlond,24,Chillicothe,28
 2011-09-16,South Harrison,61,Albany,7
-2011-09-16,Adrian,49,Appleton City,12
+2011-09-16,Adrian,49,Appleton City with Montrose,12
 2011-09-16,Raytown,13,Belton,9
 2011-09-16,Lutheran St. Charles,21,Bishop DuBourg,48
 2011-09-16,Fort Osage,20,Blue Springs,41
@@ -432,7 +432,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-16,Windsor,20,Cole Camp with Green Ridge,33
 2011-09-16,Lone Jack,7,Concordia,66
 2011-09-16,Liberal,0,Diamond,24
-2011-09-16,Osceola,0,Drexel,40
+2011-09-16,Osceola,0,Drexel with Miami (Amoret),40
 2011-09-16,Lathrop,37,East Buchanan,48
 2011-09-16,Carl Junction,21,East Newton,0
 2011-09-16,Eldon,47,El Dorado Springs,14
@@ -487,7 +487,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-16,Trenton,42,Putnam County,6
 2011-09-16,Winnetonka,12,Raytown South,7
 2011-09-16,Lockwood with Golden City,21,Rich Hill with Hume,14
-2011-09-16,Jefferson City,31,Rock Bridge,14
+2011-09-16,Jefferson City,31,Rock Bridge with Columbia Independent,14
 2011-09-16,Francis Howell Central,13,Rockwood Summit,31
 2011-09-16,West Plains,0,Rolla,38
 2011-09-16,Oak Park,6,Ruskin,32
@@ -560,7 +560,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-23,Brentwood,33,Cuba,14
 2011-09-23,Chaminade College Prep,24,De Smet Jesuit,42
 2011-09-23,Malden,26,Dexter,40
-2011-09-23,Archie,0,Drexel,41
+2011-09-23,Archie,0,Drexel with Miami (Amoret),41
 2011-09-23,St. Charles West,30,Duchesne,7
 2011-09-23,Nevada,8,El Dorado Springs,0
 2011-09-23,Osage,48,Eldon,8
@@ -625,7 +625,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-23,Ozark,42,Republic,15
 2011-09-23,Adrian,55,Rich Hill with Hume,7
 2011-09-23,Lafayette County,20,Richmond,16
-2011-09-23,Rock Bridge,6,Rockhurst,35
+2011-09-23,Rock Bridge with Columbia Independent,6,Rockhurst,35
 2011-09-23,Webster Groves,31,Rockwood Summit,14
 2011-09-23,Lebanon,42,Rolla,14
 2011-09-23,North Kansas City,19,Ruskin,0
@@ -657,7 +657,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-23,Parkview,42,West Plains,21
 2011-09-23,Trenton,34,West Platte,28
 2011-09-23,Cabool,21,Willow Springs,7
-2011-09-23,Appleton City,6,Windsor,35
+2011-09-23,Appleton City with Montrose,6,Windsor,35
 2011-09-23,Hillsboro,54,Windsor (Imperial),6
 2011-09-23,Montgomery County,47,Winfield,14
 2011-09-23,Lee's Summit West,17,Winnetonka,0
@@ -675,7 +675,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-29,St. Vincent,16,Crystal City,26
 2011-09-29,University City,12,Rockwood Summit,17
 2011-09-30,Gallatin,49,Albany,6
-2011-09-30,Butler,57,Appleton City,0
+2011-09-30,Butler,57,Appleton City with Montrose,0
 2011-09-30,Skyline,41,Ash Grove,13
 2011-09-30,Salem,12,Ava,0
 2011-09-30,Fort Osage,41,Belton,7
@@ -715,7 +715,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-30,Diamond,0,Greenfield,35
 2011-09-30,Boonville,20,Hannibal,14
 2011-09-30,Pleasant Hill,14,Harrisonville,29
-2011-09-30,Rock Bridge,35,Helias Catholic,13
+2011-09-30,Rock Bridge with Columbia Independent,35,Helias Catholic,13
 2011-09-30,Caruthersville,38,Herculaneum,12
 2011-09-30,Rockhurst,21,Hickman,0
 2011-09-30,Central (Park Hills),24,Hillsboro,35
@@ -767,10 +767,10 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-09-30,Winnetonka,24,Raytown,14
 2011-09-30,Buffalo,36,Reeds Spring,6
 2011-09-30,Webb City,42,Republic,0
-2011-09-30,Drexel,56,Rich Hill with Hume,7
+2011-09-30,Drexel with Miami (Amoret),56,Rich Hill with Hume,7
 2011-09-30,Joplin,21,Rolla,35
 2011-09-30,Carl Junction,7,Seneca,27
-2011-09-30,Renaissance Academy,52,Sherwood,20
+2011-09-30,Renaissance Academy Charter,52,Sherwood,20
 2011-09-30,Chaminade College Prep,28,SLUH,35
 2011-09-30,Center,14,Smith-Cotton,34
 2011-09-30,Bishop LeBlond,14,Smithville,42
@@ -798,7 +798,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-10-01,Ft. Zumwalt East,21,Ft. Zumwalt South,20
 2011-10-01,Sumner,6,Gateway,50
 2011-10-01,McCluer,12,Hazelwood West,48
-2011-10-01,Rock Bridge,35,Helias Catholic,13
+2011-10-01,Rock Bridge with Columbia Independent,35,Helias Catholic,13
 2011-10-01,McCluer South-Berkeley,16,Jennings,12
 2011-10-01,Affton,0,Ladue Horton Watkins,48
 2011-10-01,Hazelwood East,36,McCluer North,38
@@ -903,7 +903,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-10-07,Ruskin,0,Raymore-Peculiar,35
 2011-10-07,Belton,28,Raytown South,45
 2011-10-07,Lexington,6,Richmond,50
-2011-10-07,Francis Howell,10,Rock Bridge,20
+2011-10-07,Francis Howell,10,Rock Bridge with Columbia Independent,20
 2011-10-07,Paris,25,Salisbury,47
 2011-10-07,Orrick,0,Santa Fe,45
 2011-10-07,Greenfield,26,Sarcoxie,34
@@ -945,7 +945,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-10-08,Lift for Life Academy Charter,6,Veritas Christian Academy,40
 2011-10-13,Bishop DuBourg,44,Affton,40
 2011-10-13,Central (Springfield),20,Lebanon,61
-2011-10-14,Appleton City,14,Archie,52
+2011-10-14,Appleton City with Montrose,14,Archie,52
 2011-10-14,Reeds Spring,0,Aurora,47
 2011-10-14,Buffalo,38,Ava,43
 2011-10-14,Blue Springs South,21,Blue Springs,26
@@ -997,7 +997,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-10-14,Lee's Summit West,56,Lee's Summit,0
 2011-10-14,Lawson,42,Lexington,7
 2011-10-14,Lockwood with Golden City,44,Liberal,14
-2011-10-14,Rock Bridge,40,Liberty,7
+2011-10-14,Rock Bridge with Columbia Independent,40,Liberty,7
 2011-10-14,Northeast (Kansas City),6,Lincoln College Prep,60
 2011-10-14,De Smet Jesuit,30,Lindbergh,13
 2011-10-14,Midway,42,Lone Jack,28
@@ -1081,7 +1081,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-10-15,Ladue Horton Watkins,55,MICDS,56
 2011-10-15,Soldan International Studies,19,Vashon,25
 2011-10-21,King City with Pattonsburg,32,Albany,27
-2011-10-21,Rich Hill with Hume,43,Appleton City,13
+2011-10-21,Rich Hill with Hume,43,Appleton City with Montrose,13
 2011-10-21,Strafford,28,Ash Grove,14
 2011-10-21,Lee's Summit,35,Belton,14
 2011-10-21,Savannah,40,Benton,13
@@ -1143,7 +1143,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-10-21,Lathrop,49,Lexington,13
 2011-10-21,Jasper,16,Liberal,19
 2011-10-21,Houston,8,Liberty (Mountain View),61
-2011-10-21,Renaissance Academy,28,Lincoln College Prep,22
+2011-10-21,Renaissance Academy Charter,28,Lincoln College Prep,22
 2011-10-21,Mehlville,15,Lindbergh,20
 2011-10-21,Greenfield,18,Lockwood with Golden City,14
 2011-10-21,Ava,19,Logan-Rogersville,41
@@ -1153,7 +1153,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-10-21,Hillcrest,56,Marshfield,6
 2011-10-21,Diamond,34,McAuley Catholic with New Heights Christian,6
 2011-10-21,East Buchanan,56,Mid-Buchanan,28
-2011-10-21,Drexel,14,Midway,28
+2011-10-21,Drexel with Miami (Amoret),14,Midway,28
 2011-10-21,Skyline,21,Miller,40
 2011-10-21,St. Mary's South Side,13,Miller Career Academy,28
 2011-10-21,North Callaway,50,Missouri Military Academy,7
@@ -1179,7 +1179,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-10-21,Truman,21,Raytown,28
 2011-10-21,Mt. Vernon,52,Reeds Spring,0
 2011-10-21,Oak Grove,14,Richmond,23
-2011-10-21,Blue Springs South,35,Rock Bridge,20
+2011-10-21,Blue Springs South,35,Rock Bridge with Columbia Independent,20
 2011-10-21,Lee's Summit North,10,Rockhurst,71
 2011-10-21,Westran,22,Salisbury,50
 2011-10-21,Lamar,55,Sarcoxie,0
@@ -1272,7 +1272,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-10-27,Odessa,0,Oak Grove,46
 2011-10-27,Staley,43,Oak Park,14
 2011-10-27,Salem,0,Osage,42
-2011-10-27,Appleton City,7,Osceola,55
+2011-10-27,Appleton City with Montrose,7,Osceola,55
 2011-10-27,Kickapoo,26,Ozark,42
 2011-10-27,Monroe City,29,Palmyra,21
 2011-10-27,Glendale,45,Parkview,0
@@ -1308,7 +1308,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-10-28,Liberty,6,Blue Springs South,43
 2011-10-28,Parkway Central,35,Chaminade College Prep,0
 2011-10-28,Parkway South,0,Christian Brothers College,47
-2011-10-28,Lone Jack,7,Drexel,46
+2011-10-28,Lone Jack,7,Drexel with Miami (Amoret),46
 2011-10-28,Westminster Christian Academy,0,Duchesne,7
 2011-10-28,California,0,Eldon,38
 2011-10-28,Smithville,12,Excelsior Springs,20
@@ -1335,7 +1335,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-10-28,Eureka,48,Oakville,21
 2011-10-28,Bowling Green,21,Orchard Farm,0
 2011-10-28,Central (St. Joseph),24,Park Hill,6
-2011-10-28,Blue Springs,27,Rock Bridge,32
+2011-10-28,Blue Springs,27,Rock Bridge with Columbia Independent,32
 2011-10-28,Smith-Cotton,42,Rolla,40
 2011-10-28,Slater,0,Salisbury,66
 2011-10-28,Lindbergh,21,SLUH,35
@@ -1395,7 +1395,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-11-02,Clinton,0,Cassville,35
 2011-11-02,Monett,6,Pleasant Hill,14
 2011-11-02,Lincoln College Prep,0,O'Hara,28
-2011-11-02,Pembroke Hill,26,Renaissance Academy,50
+2011-11-02,Pembroke Hill,26,Renaissance Academy Charter,50
 2011-11-02,Chillicothe,8,Richmond,42
 2011-11-02,Van Horn,0,Maryville,41
 2011-11-02,DeSoto,16,Farmington,61
@@ -1428,7 +1428,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-11-04,Hickman,0,Francis Howell,31
 2011-11-04,Pattonville,0,Ft. Zumwalt West,41
 2011-11-04,Lee's Summit North,7,Blue Springs South,49
-2011-11-04,Rock Bridge,9,Rockhurst,10
+2011-11-04,Rock Bridge with Columbia Independent,9,Rockhurst,10
 2011-11-05,Lafayette (Wildwood),14,McCluer North,37
 2011-11-07,Valle Catholic,52,Thayer,21
 2011-11-07,Skyline,54,Miller,34
@@ -1468,7 +1468,7 @@ Date,Home Team,Home Score,Away Team,Away Score
 2011-11-07,Raytown South,6,Staley,45
 2011-11-08,West Platte,14,East Buchanan,34
 2011-11-08,Penney,27,Lawson,0
-2011-11-08,Renaissance Academy,6,O'Hara,27
+2011-11-08,Renaissance Academy Charter,6,O'Hara,27
 2011-11-08,Savannah,37,Kearney,16
 2011-11-11,SLUH,47,De Smet Jesuit,46
 2011-11-11,McCluer North,10,Christian Brothers College,31
