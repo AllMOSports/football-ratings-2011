@@ -1,5 +1,5 @@
 {
-  "last_updated": "April 27, 2026 at 02:41 PM",
+  "last_updated": "April 30, 2026 at 04:28 PM",
   "league_average": 25.43,
   "teams": [
     {
@@ -81,17 +81,6 @@
     },
     {
       "ovr_rank": 8,
-      "school": "Kirkwood",
-      "classification": 5,
-      "district": 5,
-      "ovr_rating": 66.51,
-      "off_rating": 31.7,
-      "off_rank": 13,
-      "def_rating": 34.81,
-      "def_rank": 5
-    },
-    {
-      "ovr_rank": 9,
       "school": "Staley",
       "classification": 5,
       "district": 12,
@@ -100,6 +89,17 @@
       "off_rank": 4,
       "def_rating": 27.8,
       "def_rank": 16
+    },
+    {
+      "ovr_rank": 9,
+      "school": "Kirkwood",
+      "classification": 5,
+      "district": 5,
+      "ovr_rating": 66.51,
+      "off_rating": 31.7,
+      "off_rank": 13,
+      "def_rating": 34.81,
+      "def_rank": 5
     },
     {
       "ovr_rank": 10,
@@ -433,17 +433,6 @@
     },
     {
       "ovr_rank": 40,
-      "school": "Lamar",
-      "classification": 2,
-      "district": 7,
-      "ovr_rating": 37.66,
-      "off_rating": 22.29,
-      "off_rank": 31,
-      "def_rating": 15.37,
-      "def_rank": 65
-    },
-    {
-      "ovr_rank": 41,
       "school": "Maryville",
       "classification": 3,
       "district": 16,
@@ -452,6 +441,17 @@
       "off_rank": 63,
       "def_rating": 23.24,
       "def_rank": 27
+    },
+    {
+      "ovr_rank": 41,
+      "school": "Lamar",
+      "classification": 2,
+      "district": 7,
+      "ovr_rating": 37.66,
+      "off_rating": 22.29,
+      "off_rank": 31,
+      "def_rating": 15.37,
+      "def_rank": 65
     },
     {
       "ovr_rank": 42,
@@ -1599,17 +1599,6 @@
     },
     {
       "ovr_rank": 146,
-      "school": "Holden",
-      "classification": 3,
-      "district": 12,
-      "ovr_rating": 1.75,
-      "off_rating": 5.28,
-      "off_rank": 110,
-      "def_rating": -3.53,
-      "def_rank": 178
-    },
-    {
-      "ovr_rank": 147,
       "school": "Parkview",
       "classification": 5,
       "district": 7,
@@ -1618,6 +1607,17 @@
       "off_rank": 181,
       "def_rating": 6.44,
       "def_rank": 108
+    },
+    {
+      "ovr_rank": 147,
+      "school": "Holden",
+      "classification": 3,
+      "district": 12,
+      "ovr_rating": 1.75,
+      "off_rating": 5.28,
+      "off_rank": 110,
+      "def_rating": -3.53,
+      "def_rank": 178
     },
     {
       "ovr_rank": 148,
@@ -2369,17 +2369,6 @@
     },
     {
       "ovr_rank": 216,
-      "school": "Archie",
-      "classification": 1,
-      "district": 7,
-      "ovr_rating": -18.43,
-      "off_rating": -10.96,
-      "off_rank": 225,
-      "def_rating": -7.47,
-      "def_rank": 204
-    },
-    {
-      "ovr_rank": 217,
       "school": "El Dorado Springs",
       "classification": 2,
       "district": 8,
@@ -2388,6 +2377,17 @@
       "off_rank": 210,
       "def_rating": -9.87,
       "def_rank": 231
+    },
+    {
+      "ovr_rank": 217,
+      "school": "Archie",
+      "classification": 1,
+      "district": 7,
+      "ovr_rating": -18.43,
+      "off_rating": -10.96,
+      "off_rank": 225,
+      "def_rating": -7.47,
+      "def_rank": 204
     },
     {
       "ovr_rank": 218,
@@ -3491,17 +3491,6 @@
     },
     {
       "ovr_rank": 318,
-      "school": "Van-Far",
-      "classification": 1,
-      "district": 9,
-      "ovr_rating": -76.67,
-      "off_rating": -40.66,
-      "off_rank": 321,
-      "def_rating": -36.01,
-      "def_rank": 320
-    },
-    {
-      "ovr_rank": 319,
       "school": "Wright City",
       "classification": 3,
       "district": 5,
@@ -3510,6 +3499,17 @@
       "off_rank": 326,
       "def_rating": -28.84,
       "def_rank": 309
+    },
+    {
+      "ovr_rank": 319,
+      "school": "Van-Far",
+      "classification": 1,
+      "district": 9,
+      "ovr_rating": -76.67,
+      "off_rating": -40.66,
+      "off_rank": 321,
+      "def_rating": -36.01,
+      "def_rank": 320
     },
     {
       "ovr_rank": 320,
