@@ -11,12 +11,12 @@ import time
 # CONFIGURATION
 # ---------------------------------------------------------------------------
  
-SEASON_START  = date(2010, 8, 1)
-SEASON_END    = date(2010, 12, 15)
+SEASON_START  = date(2011, 8, 1)
+SEASON_END    = date(2011, 12, 15)
 BASE_URL      = "https://www.mshsaa.org/activities/scoreboard.aspx?alg=19&date={}"
 MAX_POINTS    = 100
-OUTPUT_PATH   = "football_ratings_2010.json"
-CSV_PATH      = "football_scoreboard_2010.csv"
+OUTPUT_PATH   = "football_ratings_2011.json"
+CSV_PATH      = "football_scoreboard_2011.csv"
 CLASSIFICATIONS_PATH  = "classifications.json"
 SCHOOLS_CSV           = "mshsaa_schools.csv"
 ITERATIONS            = 1000
@@ -759,7 +759,7 @@ def save_class_jsons(off_rating, def_rating, ovr_rating, league_avg,
             print(f"  Class {cls}: no teams found — skipping.")
             continue
  
-        path = f"football_ratings_2010_class{cls}.json"
+        path = f"football_ratings_2011_class{cls}.json"
         output = {
             "last_updated":   datetime.now().strftime("%B %d, %Y at %I:%M %p"),
             "league_average": round(league_avg, 2),
@@ -832,10 +832,10 @@ def save_rankings_csv(off_rating, def_rating, ovr_rating,
     ])
  
     if class_filter is None:
-        path  = "football_rankings_2010_all.csv"
+        path  = "football_rankings_2011_all.csv"
         label = "All teams"
     else:
-        path  = f"football_rankings_2010_class{class_filter}.csv"
+        path  = f"football_rankings_2011_class{class_filter}.csv"
         label = f"Class {class_filter}"
  
     df.to_csv(path, index=False)
@@ -858,7 +858,7 @@ def save_all_rankings_csvs(off_rating, def_rating, ovr_rating,
 # ---------------------------------------------------------------------------
  
 if __name__ == "__main__":
-    print("=== MSHSAA Football Ratings 2010 ===")
+    print("=== MSHSAA Football Ratings 2011 ===")
  
     print("\nLoading classifications...")
     team_to_class, team_to_district = load_classifications()
