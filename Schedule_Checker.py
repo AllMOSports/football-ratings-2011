@@ -161,22 +161,26 @@ def build_driver():
  
 def get_varsity_html(driver, url):
     """
-    Load the schedule page, explicitly click the Varsity tab if it exists,
-    wait for the schedule table to refresh, then return the page HTML.
+    Load the schedule page, explicitly click the Varsity tab inside the
+    LevelsOfPlay <ul>, wait for the table to refresh, then return HTML.
  
-    Strategy:
-      1. Load the page and wait for the LevelsOfPlay list to appear.
-      2. Find the <li> whose link text contains "Varsity" (case-insensitive).
-      3. If it is not already the active tab, click it and wait for the
-         schedule table to re-render.
-      4. If no LevelsOfPlay list exists the page only has one level — use as-is.
-      5. After clicking (or confirming Varsity is already active), verify the
-         active tab really is Varsity before returning HTML.  If it still is
-         not Varsity, return an empty string so the caller skips this team.
+    The page has two independent tab systems:
+      • An outer navigation (e.g. "Sports & Activities") whose <li> elements
+        also carry class="current" or class="active".  We must NOT confuse
+        these with the inner LevelsOfPlay tabs.
+      • The inner #LevelsOfPlay <ul> which has tabs like Varsity / JV / etc.
+ 
+    All tab detection and verification is scoped strictly to #LevelsOfPlay
+    so the outer nav never interferes.
+ 
+    Return value:
+      - Full page HTML string if the Varsity tab is active and ready.
+      - Empty string "" if no Varsity tab exists or it could not be activated
+        (caller will skip this team).
     """
     driver.get(url)
  
-    # ── Step 1: wait for page to settle (table or LevelsOfPlay) ──────────────
+    # ── Step 1: wait for page to settle ──────────────────────────────────────
     try:
         WebDriverWait(driver, JS_WAIT_TIMEOUT).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "table, ul#LevelsOfPlay"))
@@ -184,42 +188,44 @@ def get_varsity_html(driver, url):
     except Exception:
         pass  # proceed with whatever rendered
  
-    # ── Step 2: locate the Varsity tab link ───────────────────────────────────
+    # ── Step 2: locate the #LevelsOfPlay ul ──────────────────────────────────
     try:
         levels_ul = driver.find_element(By.ID, "LevelsOfPlay")
     except Exception:
-        # No level-of-play tabs at all — single-level page, use as-is
+        # No level-of-play tabs — single-level page, treat as Varsity
         print("  (no LevelsOfPlay tabs — treating entire page as Varsity)")
         return driver.page_source
  
-    # Find all tab <li> elements
+    # ── Step 3: find the Varsity <li> strictly inside #LevelsOfPlay ──────────
     tab_items = levels_ul.find_elements(By.TAG_NAME, "li")
  
-    varsity_link  = None
+    varsity_li     = None
+    varsity_link   = None
     already_active = False
  
     for li in tab_items:
         text = li.text.strip().lower()
         if "varsity" in text:
+            varsity_li = li
             li_classes = li.get_attribute("class") or ""
             if "current" in li_classes or "active" in li_classes:
                 already_active = True
-                print("  (Varsity tab already active)")
             else:
-                # Find the clickable anchor inside the li
                 try:
                     varsity_link = li.find_element(By.TAG_NAME, "a")
                 except Exception:
-                    varsity_link = li  # fall back to clicking the li itself
+                    varsity_link = li  # fall back to clicking the <li> itself
             break
  
-    # ── Step 3: click Varsity tab if it is not already active ────────────────
-    if not already_active:
-        if varsity_link is None:
-            # No Varsity tab found at all on this page — skip it
-            print("  (no Varsity tab found — skipping)")
-            return ""
+    if varsity_li is None:
+        # No tab labelled "Varsity" inside LevelsOfPlay at all
+        print("  (no Varsity tab found — skipping)")
+        return ""
  
+    # ── Step 4: click the Varsity tab if it isn't already active ─────────────
+    if already_active:
+        print("  (Varsity tab already active)")
+    else:
         try:
             driver.execute_script("arguments[0].click();", varsity_link)
             print("  (clicked Varsity tab)")
@@ -237,15 +243,17 @@ def get_varsity_html(driver, url):
         except Exception:
             pass  # return whatever we have
  
-    # ── Step 4: confirm the active tab is now Varsity ────────────────────────
+    # ── Step 5: verify the active tab inside #LevelsOfPlay is now Varsity ────
+    # Re-fetch the ul in case the DOM refreshed after the click.
     try:
         levels_ul_post = driver.find_element(By.ID, "LevelsOfPlay")
+        # Find the active <li> scoped strictly inside #LevelsOfPlay
         active_li = levels_ul_post.find_element(
             By.CSS_SELECTOR, "li.current, li.active"
         )
         active_text = active_li.text.strip().lower()
         if "varsity" not in active_text:
-            print(f"  WARNING: Active tab after click is {active_text!r}, not Varsity — skipping")
+            print(f"  WARNING: LevelsOfPlay active tab is {active_text!r}, not Varsity — skipping")
             return ""
     except Exception:
         pass  # can't verify — proceed anyway
@@ -300,8 +308,13 @@ def find_school_id(team_name, norm, id_map):
 def parse_schedule_page(html):
     """
     Parse game rows from the Varsity schedule table only.
-    By the time this function is called, get_varsity_html() has already
-    clicked the Varsity tab, so the schedule div contains only Varsity games.
+    By the time this is called, get_varsity_html() has already clicked the
+    Varsity tab, so the schedule div should contain only Varsity games.
+ 
+    Safety check: if #LevelsOfPlay exists in the HTML, confirm the active
+    tab INSIDE that ul is Varsity.  We scope the search to the ul itself
+    so the outer page navigation (which also uses class="current") never
+    triggers a false rejection.
     """
     if not html:
         return []
@@ -309,17 +322,16 @@ def parse_schedule_page(html):
     soup  = BeautifulSoup(html, "html.parser")
     games = []
  
-    # Final safety check: confirm the active tab in the parsed HTML is Varsity.
-    # This catches any edge case where the HTML was returned before the click
-    # fully took effect.
+    # Scoped safety check — look only inside #LevelsOfPlay, not the whole page
     levels_ul = soup.find("ul", id="LevelsOfPlay")
     if levels_ul:
-        active_li = (soup.find("li", class_="current") or
-                     soup.find("li", class_="active"))
+        # Search for the active <li> scoped to this ul only
+        active_li = (levels_ul.find("li", class_="current") or
+                     levels_ul.find("li", class_="active"))
         if active_li:
             active_text = active_li.get_text(strip=True).lower()
             if "varsity" not in active_text:
-                print(f"  (parse skipped — HTML active tab is {active_text!r}, not Varsity)")
+                print(f"  (parse skipped — LevelsOfPlay active tab is {active_text!r}, not Varsity)")
                 return games
  
     # Locate the schedule div
@@ -435,8 +447,6 @@ def main():
  
             print(f"\n[{i}/{total}] {team_name}  (ID={sid})")
             try:
-                # get_varsity_html() actively clicks the Varsity tab before
-                # returning HTML — no relying on which tab the page defaults to.
                 html = get_varsity_html(driver, url)
             except Exception as exc:
                 print(f"  WARNING: Skipped — {exc}")
