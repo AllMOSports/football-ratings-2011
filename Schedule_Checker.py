@@ -152,25 +152,104 @@ def build_driver():
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1920,1080")
-    options.add_argument(f"user-agent=Mozilla/5.0 (MSHSAA-ScheduleChecker/1.0)")
+    options.add_argument("user-agent=Mozilla/5.0 (MSHSAA-ScheduleChecker/1.0)")
  
     service = Service(ChromeDriverManager().install())
     driver  = webdriver.Chrome(service=service, options=options)
     return driver
  
  
-def get_rendered_html(driver, url, wait_selector="table"):
+def get_varsity_html(driver, url):
     """
-    Load a URL in the headless browser, wait for a CSS selector to appear,
-    then return the fully-rendered page HTML.
+    Load the schedule page, explicitly click the Varsity tab if it exists,
+    wait for the schedule table to refresh, then return the page HTML.
+ 
+    Strategy:
+      1. Load the page and wait for the LevelsOfPlay list to appear.
+      2. Find the <li> whose link text contains "Varsity" (case-insensitive).
+      3. If it is not already the active tab, click it and wait for the
+         schedule table to re-render.
+      4. If no LevelsOfPlay list exists the page only has one level — use as-is.
+      5. After clicking (or confirming Varsity is already active), verify the
+         active tab really is Varsity before returning HTML.  If it still is
+         not Varsity, return an empty string so the caller skips this team.
     """
     driver.get(url)
+ 
+    # ── Step 1: wait for page to settle (table or LevelsOfPlay) ──────────────
     try:
         WebDriverWait(driver, JS_WAIT_TIMEOUT).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, wait_selector))
+            EC.presence_of_element_located((By.CSS_SELECTOR, "table, ul#LevelsOfPlay"))
         )
     except Exception:
-        pass  # Return whatever HTML we have even if timeout
+        pass  # proceed with whatever rendered
+ 
+    # ── Step 2: locate the Varsity tab link ───────────────────────────────────
+    try:
+        levels_ul = driver.find_element(By.ID, "LevelsOfPlay")
+    except Exception:
+        # No level-of-play tabs at all — single-level page, use as-is
+        print("  (no LevelsOfPlay tabs — treating entire page as Varsity)")
+        return driver.page_source
+ 
+    # Find all tab <li> elements
+    tab_items = levels_ul.find_elements(By.TAG_NAME, "li")
+ 
+    varsity_link  = None
+    already_active = False
+ 
+    for li in tab_items:
+        text = li.text.strip().lower()
+        if "varsity" in text:
+            li_classes = li.get_attribute("class") or ""
+            if "current" in li_classes or "active" in li_classes:
+                already_active = True
+                print("  (Varsity tab already active)")
+            else:
+                # Find the clickable anchor inside the li
+                try:
+                    varsity_link = li.find_element(By.TAG_NAME, "a")
+                except Exception:
+                    varsity_link = li  # fall back to clicking the li itself
+            break
+ 
+    # ── Step 3: click Varsity tab if it is not already active ────────────────
+    if not already_active:
+        if varsity_link is None:
+            # No Varsity tab found at all on this page — skip it
+            print("  (no Varsity tab found — skipping)")
+            return ""
+ 
+        try:
+            driver.execute_script("arguments[0].click();", varsity_link)
+            print("  (clicked Varsity tab)")
+        except Exception as exc:
+            print(f"  WARNING: Could not click Varsity tab — {exc}")
+            return ""
+ 
+        # Wait for the schedule table to re-render after the click
+        try:
+            WebDriverWait(driver, JS_WAIT_TIMEOUT).until(
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, "div#ctl00_contentMain_divSchedule table")
+                )
+            )
+        except Exception:
+            pass  # return whatever we have
+ 
+    # ── Step 4: confirm the active tab is now Varsity ────────────────────────
+    try:
+        levels_ul_post = driver.find_element(By.ID, "LevelsOfPlay")
+        active_li = levels_ul_post.find_element(
+            By.CSS_SELECTOR, "li.current, li.active"
+        )
+        active_text = active_li.text.strip().lower()
+        if "varsity" not in active_text:
+            print(f"  WARNING: Active tab after click is {active_text!r}, not Varsity — skipping")
+            return ""
+    except Exception:
+        pass  # can't verify — proceed anyway
+ 
     return driver.page_source
  
  
@@ -219,23 +298,31 @@ def find_school_id(team_name, norm, id_map):
 # ─────────────────────────────────────────────────────────────────────────────
  
 def parse_schedule_page(html):
+    """
+    Parse game rows from the Varsity schedule table only.
+    By the time this function is called, get_varsity_html() has already
+    clicked the Varsity tab, so the schedule div contains only Varsity games.
+    """
+    if not html:
+        return []
+ 
     soup  = BeautifulSoup(html, "html.parser")
     games = []
  
-    # Confirm the active level of play tab is Varsity.
-    # The LevelsOfPlay ul marks the active tab with class "level current".
-    # If it exists and the active tab is NOT Varsity, skip this page entirely.
+    # Final safety check: confirm the active tab in the parsed HTML is Varsity.
+    # This catches any edge case where the HTML was returned before the click
+    # fully took effect.
     levels_ul = soup.find("ul", id="LevelsOfPlay")
     if levels_ul:
-        active_li = levels_ul.find("li", class_="current")
+        active_li = (soup.find("li", class_="current") or
+                     soup.find("li", class_="active"))
         if active_li:
             active_text = active_li.get_text(strip=True).lower()
             if "varsity" not in active_text:
-                print(f"  (skipping — active tab is not Varsity: {active_text!r})")
+                print(f"  (parse skipped — HTML active tab is {active_text!r}, not Varsity)")
                 return games
  
-    # Only parse the schedule from the dedicated schedule div, which contains
-    # whichever level-of-play tab is currently active (should be Varsity).
+    # Locate the schedule div
     schedule_div = soup.find("div", id="ctl00_contentMain_divSchedule")
     if not schedule_div:
         return games
@@ -348,9 +435,16 @@ def main():
  
             print(f"\n[{i}/{total}] {team_name}  (ID={sid})")
             try:
-                html = get_rendered_html(driver, url)
+                # get_varsity_html() actively clicks the Varsity tab before
+                # returning HTML — no relying on which tab the page defaults to.
+                html = get_varsity_html(driver, url)
             except Exception as exc:
                 print(f"  WARNING: Skipped — {exc}")
+                time.sleep(REQUEST_DELAY)
+                continue
+ 
+            if not html:
+                print("  (skipped — no Varsity tab available)")
                 time.sleep(REQUEST_DELAY)
                 continue
  
@@ -361,7 +455,7 @@ def main():
                 print("  (no game rows parsed)")
                 continue
  
-            print(f"  {len(games)} games on MSHSAA page.")
+            print(f"  {len(games)} Varsity games on MSHSAA page.")
             for game in games:
                 opp_norm = game["opponent_norm"]
                 if not opponent_in_rankings(opp_norm, ranked_norms):
@@ -402,8 +496,8 @@ def main():
         print(f"Done. {len(missing_df)} unique missing games -> {OUTPUT_MISSING}")
     else:
         # Always write the file so the GitHub Actions artifact upload doesn't fail
-        pd.DataFrame(columns=["Ranked Team","Team School ID","Date","Opponent",
-                               "Home/Away","Team Score","Opp Score","MSHSAA URL"]
+        pd.DataFrame(columns=["Ranked Team", "Team School ID", "Date", "Opponent",
+                               "Home/Away", "Team Score", "Opp Score", "MSHSAA URL"]
                      ).to_csv(OUTPUT_MISSING, index=False)
         print("No missing games detected.")
  
