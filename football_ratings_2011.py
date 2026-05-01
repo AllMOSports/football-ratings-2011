@@ -11,17 +11,308 @@ import time
 # CONFIGURATION
 # ---------------------------------------------------------------------------
  
-SEASON_START  = date(2011, 8, 1)
-SEASON_END    = date(2011, 12, 15)
+SEASON_START  = date(2010, 8, 1)
+SEASON_END    = date(2010, 12, 15)
 BASE_URL      = "https://www.mshsaa.org/activities/scoreboard.aspx?alg=19&date={}"
 MAX_POINTS    = 100
-OUTPUT_PATH   = "football_ratings_2011.json"
-CSV_PATH      = "football_scoreboard_2011.csv"
+OUTPUT_PATH   = "football_ratings_2010.json"
+CSV_PATH      = "football_scoreboard_2010.csv"
 CLASSIFICATIONS_PATH  = "classifications.json"
 SCHOOLS_CSV           = "mshsaa_schools.csv"
 ITERATIONS            = 1000
 LEARNING_RATE         = 0.1
-COMPETITIVE_THRESHOLD = 35
+COMPETITIVE_THRESHOLD = 40
+ 
+# ---------------------------------------------------------------------------
+# MANUAL GAMES (not listed on MSHSAA Scoreboard)
+# ---------------------------------------------------------------------------
+# Add any games missing from the MSHSAA scoreboard here.
+# Format: ("YYYY-MM-DD", "Team 1 Name", score1, "Team 2 Name", score2)
+# Team names must match exactly the names in classifications.json.
+ 
+MANUAL_GAMES = [
+    ("2011-08-26", "Portageville", 0, "Caruthersville", 58),
+    ("2011-09-09", "Portageville", 48, "Charleston", 21),
+    ("2011-09-16", "Portageville", 24, "Malden", 41),
+    ("2011-09-23", "Portageville", 22, "Kennett", 40),
+    ("2011-09-30", "Portageville", 30, "Scott City", 31),
+    ("2011-10-07", "Portageville", 46, "East Prairie", 38),
+    ("2011-08-26", "St. Vincent", 13, "Central (Park Hills)", 28),
+    ("2011-09-23", "St. Vincent", 35, "St. Pius X (Festus)", 21),
+    ("2011-10-04", "St. Vincent", 35, "Grandview", 20),
+    ("2011-10-21", "St. Vincent", 7, "Valle Catholic", 48),
+    ("2011-09-16", "Valle Catholic", 42, "Grandview (Hillsboro)", 14),
+    ("2011-10-07", "Valle Catholic", 62, "St. Pius X (Festus)", 0),
+    ("2011-09-23", "Greenfield", 14, "Hogan Prep Academy Charter", 35),
+    ("2011-08-26", "Sacred Heart", 18, "Milan", 49),
+    ("2011-09-16", "Sacred Heart", 54, "Wentworth Military Academy", 0),
+    ("2011-10-07", "Sacred Heart", 32, "Rich Hill with Hume", 0),
+    ("2011-10-07", "Tipton", 26, "South Callaway", 20),
+    ("2011-09-09", "Windsor", 30, "St. Mary's (Independence)", 0),
+    ("2011-10-08", "Windsor", 36, "Wentworth Military Academy", 0),
+    ("2011-09-30", "Concordia", 32, "Wellington-Napoleon", 48),
+    ("2011-09-09", "Crest Ridge", 0, "Wellington-Napoleon", 46),
+    ("2011-09-16", "Santa Fe", 0, "Wellington-Napoleon", 39),
+    ("2011-10-06", "University Academy Charter", 24, "Pembroke Hill", 48),
+    ("2011-10-15", "University Academy Charter", 48, "Drexel with Miami (Amoret)", 28),
+    ("2011-10-28", "University Academy Charter", 21, "Midway", 20),
+    ("2011-09-02", "Louisiana", 34, "Highland", 6),
+    ("2011-10-14", "Louisiana", 13, "South Shelby", 48),
+    ("2011-10-28", "Louisiana", 36, "Van-Far", 8),
+    ("2011-10-27", "Paris", 21, "South Shelby", 44),
+    ("2011-08-26", "South Shelby", 20, "Trenton", 0),
+    ("2011-09-02", "South Shelby", 33, "Mark Twain", 12),
+    ("2011-09-09", "South Shelby", 0, "Macon", 52),
+    ("2011-09-16", "South Shelby", 6, "Clark County", 41),
+    ("2011-09-30", "South Shelby", 14, "Palmyra", 28),
+    ("2011-10-07", "South Shelby", 34, "Highland", 32),
+    ("2011-10-21", "South Shelby", 51, "Van-Far", 6),
+    ("2011-10-27", "South Shelby", 44, "Paris", 21),
+    ("2011-08-26", "Van-Far", 6, "Orchard Farm", 47),
+    ("2011-09-16", "Van-Far", 24, "Winfield", 29),
+    ("2011-09-23", "Van-Far", 30, "Wright City", 44),
+    ("2011-08-26", "Knox County", 18, "Highland", 6),
+    ("2011-09-09", "Knox County", 54, "North Shelby", 0),
+    ("2011-09-16", "Knox County", 48, "Fayette", 13),
+    ("2011-09-23", "Knox County", 16, "Schuyler County", 34),
+    ("2011-10-07", "Knox County", 6, "Milan", 41),
+    ("2011-10-14", "Knox County", 6, "Scotland County", 35),
+    ("2011-10-21", "Knox County", 44, "North Shelby", 0),
+    ("2011-10-28", "Knox County", 34, "Schuyler County", 13),
+    ("2011-09-09", "North Shelby", 6, "Knox County", 54),
+    ("2011-09-16", "North Shelby", 0, "Milan", 74),
+    ("2011-09-30", "North Shelby", 14, "Schuyler County", 40),
+    ("2011-10-07", "North Shelby", 28, "Scotland County", 69),
+    ("2011-10-14", "North Shelby", 0, "Schuyler County", 47),
+    ("2011-10-21", "North Shelby", 0, "Knox County", 44),
+    ("2011-10-27", "North Shelby", 6, "Scotland County", 50),
+    ("2011-09-02", "Schuyler County", 0, "Milan", 34),
+    ("2011-10-20", "Schuyler County", 14, "Scotland County", 28),
+    ("2011-09-09", "Scotland County", 18, "Highland", 34),
+    ("2011-09-30", "Scotland County", 0, "Milan", 54),
+    ("2011-10-14", "Scotland County", 35, "Knox County", 6),
+    ("2011-10-27", "Scotland County", 50, "North Shelby", 6),
+    ("2011-08-26", "Fayette", 13, "South Callaway", 41),
+    ("2011-10-21", "Marceline", 6, "Milan", 7),
+    ("2011-09-09", "Milan", 14, "Palmyra", 7),
+    ("2011-09-23", "Milan", 35, "Braymer", 15),
+    ("2011-10-14", "Milan", 35, "Princeton with Mercer", 16),
+    ("2011-10-21", "Milan", 7, "Marceline", 6),
+    ("2011-10-28", "Milan", 49, "Putnam County", 14),
+    ("2011-10-14", "Orrick", 12, "Wellington-Napoleon", 53),
+    ("2011-10-27", "Orrick", 28, "Wentworth Military Academy", 0),
+    ("2011-08-26", "Wellington-Napoleon", 53, "Lathrop", 14),
+    ("2011-09-23", "Wellington-Napoleon", 55, "St. Paul Lutheran (Concordia)", 20),
+    ("2011-10-07", "Wellington-Napoleon", 53, "Sweet Springs with Malta Bend", 14),
+    ("2011-10-14", "Wellington-Napoleon", 53, "Orrick", 12),
+    ("2011-10-21", "Wellington-Napoleon", 60, "Wentworth Military Academy", 6),
+    ("2011-10-27", "Wellington-Napoleon", 54, "St. Mary's (Independence)", 6),
+    ("2011-09-16", "Gallatin", 30, "Maysville", 7),
+    ("2011-10-27", "Gallatin", 26, "South Harrison", 42),
+    ("2011-09-23", "South Harrison", 36, "Maysville", 7),
+    ("2011-09-16", "Maysville", 7, "Gallatin", 30),
+    ("2011-08-26", "Charleston", 27, "Kennett", 22),
+    ("2011-09-16", "East Prairie", 13, "Kennett", 28),
+    ("2011-09-30", "Malden", 75, "Kennett", 59),
+    ("2011-09-03", "St. Pius X (Festus)", 6, "Soldan International Studies", 53),
+    ("2011-09-09", "St. Pius X (Festus)", 15, "Grandview (Hillsboro)", 28),
+    ("2011-10-07", "Brentwood", 21, "North Callaway", 26),
+    ("2011-09-16", "Grandview (Hillsboro)", 14, "Valle Catholic", 42),
+    ("2011-10-14", "Grandview (Hillsboro)", 21, "Principia", 28),
+    ("2011-09-16", "Principia", 14, "Lutheran South", 41),
+    ("2011-10-01", "Principia", 0, "Lutheran North", 41),
+    ("2011-09-24", "Lift for Life Academy Charter", 32, "Beaumont", 0),
+    ("2011-10-14", "Lift for Life Academy Charter", 22, "Transportation and Law", 6),
+    ("2011-10-22", "Lift for Life Academy Charter", 20, "Carnahan", 30),
+    ("2011-10-28", "Lift for Life Academy Charter", 6, "Maplewood-Richmond Hts.", 75),
+    ("2011-08-26", "Maplewood-Richmond Hts.", 35, "MICDS", 36),
+    ("2011-09-23", "Maplewood-Richmond Hts.", 31, "Central (Park Hills)", 6),
+    ("2011-10-01", "Maplewood-Richmond Hts.", 52, "Perryville", 0),
+    ("2011-10-15", "Maplewood-Richmond Hts.", 48, "Carnahan", 8),
+    ("2011-10-21", "Maplewood-Richmond Hts.", 54, "Transportation and Law", 7),
+    ("2011-10-27", "Maplewood-Richmond Hts.", 75, "Lift for Life Academy Charter", 6),
+    ("2011-08-26", "Cuba", 6, "St. James", 43),
+    ("2011-09-16", "Cuba", 6, "South Callaway", 48),
+    ("2011-08-26", "Lamar", 34, "Carl Junction", 6),
+    ("2011-09-02", "Lamar", 40, "Aurora", 19),
+    ("2011-09-30", "Lamar", 21, "Cassville", 49),
+    ("2011-10-14", "Blair Oaks", 19, "South Callaway", 45),
+    ("2011-09-02", "Hermann", 26, "St. James", 32),
+    ("2011-09-23", "Hermann", 34, "Owensville", 54),
+    ("2011-10-27", "Hermann", 0, "South Callaway", 52),
+    ("2011-10-21", "Montgomery County", 14, "South Callaway", 41),
+    ("2011-09-02", "South Callaway", 34, "Hallsville", 7),
+    ("2011-09-09", "South Callaway", 28, "North Callaway", 0),
+    ("2011-09-23", "South Callaway", 50, "Southern Boone", 28),
+    ("2011-09-30", "South Callaway", 39, "Orchard Farm", 3),
+    ("2011-10-07", "South Callaway", 20, "Tipton", 26),
+    ("2011-09-02", "Hallsville", 7, "South Callaway", 34),
+    ("2011-09-16", "Hallsville", 12, "North Callaway", 37),
+    ("2011-10-07", "Hallsville", 40, "Winfield", 0),
+    ("2011-09-30", "Palmyra", 28, "South Shelby", 14),
+    ("2011-09-29", "Carrollton", 6, "Hogan Prep Academy Charter", 40),
+    ("2011-10-14", "Hogan Prep Academy Charter", 39, "Lathrop", 29),
+    ("2011-10-27", "Central (New Madrid County)", 0, "Kennett", 25),
+    ("2011-10-14", "Dexter", 68, "Kennett", 20),
+    ("2011-10-21", "Fredericktown", 63, "Kennett", 14),
+    ("2011-10-07", "Kennett", 0, "Sikeston", 56),
+    ("2011-10-01", "Ste. Genevieve", 21, "John Burroughs", 41),
+    ("2011-08-27", "Confluence Prep Academy Charter", 12, "Soldan International Studies", 52),
+    ("2011-09-03", "Confluence Prep Academy Charter", 30, "Wentworth Military Academy", 0),
+    ("2011-08-27", "John Burroughs", 37, "Pembroke Hill", 30),
+    ("2011-09-10", "John Burroughs", 20, "MICDS", 45),
+    ("2011-09-17", "John Burroughs", 42, "Windsor (Imperial)", 18),
+    ("2011-09-24", "John Burroughs", 53, "Lutheran North", 16),
+    ("2011-10-01", "John Burroughs", 41, "Ste. Genevieve", 21),
+    ("2011-10-22", "John Burroughs", 45, "Imagine College Prep Charter", 12),
+    ("2011-09-17", "Priory", 14, "Lutheran North", 49),
+    ("2011-10-15", "Priory", 42, "Imagine College Prep Charter", 32),
+    ("2011-08-26", "Cardinal Ritter", 14, "St. Dominic", 27),
+    ("2011-09-16", "Cardinal Ritter", 12, "Duchesne", 7),
+    ("2011-10-21", "Cardinal Ritter", 26, "Lutheran North", 28),
+    ("2011-10-28", "Cardinal Ritter", 20, "Trinity Catholic", 36),
+    ("2011-08-27", "Lutheran North", 42, "Clayton", 14),
+    ("2011-09-03", "Lutheran North", 18, "Westminster Christian Academy", 7),
+    ("2011-10-14", "Lutheran North", 44, "Trinity Catholic", 31),
+    ("2011-09-03", "Bowling Green", 7, "Miller Career Academy", 68),
+    ("2011-09-16", "Orchard Farm", 19, "Southern Boone", 56),
+    ("2011-10-14", "Orchard Farm", 42, "Wright City", 0),
+    ("2011-10-21", "Orchard Farm", 28, "Winfield", 21),
+    ("2011-10-07", "Winfield", 0, "Hallsville", 40),
+    ("2011-10-27", "Winfield", 20, "Wright City", 13),
+    ("2011-10-14", "Wright City", 0, "Orchard Farm", 42),
+    ("2011-09-23", "Missouri Military Academy", 42, "Wentworth Military Academy", 0),
+    ("2011-10-27", "North Callaway", 38, "Southern Boone", 32),
+    ("2011-10-14", "Osage", 53, "St. James", 7),
+    ("2011-09-02", "Owensville", 6, "Sullivan", 44),
+    ("2011-09-16", "Owensville", 0, "St. Clair", 28),
+    ("2011-09-30", "Owensville", 33, "Pacific", 22),
+    ("2011-10-07", "Owensville", 28, "Union", 68),
+    ("2011-10-27", "Owensville", 80, "St. James", 75),
+    ("2011-09-23", "Salem", 6, "Mountain Grove", 7),
+    ("2011-10-20", "Salem", 43, "St. James", 27),
+    ("2011-08-26", "St. James", 43, "Cuba", 6),
+    ("2011-09-09", "St. James", 12, "Union", 48),
+    ("2011-09-16", "St. James", 39, "Cabool", 13),
+    ("2011-09-23", "St. James", 21, "Pacific", 24),
+    ("2011-09-30", "St. James", 0, "St. Clair", 49),
+    ("2011-10-07", "St. James", 14, "Sullivan", 41),
+    ("2011-09-23", "Mountain Grove", 7, "Salem", 6),
+    ("2011-09-09", "Aurora", 18, "Carl Junction", 13),
+    ("2011-09-16", "Aurora", 7, "Cassville", 21),
+    ("2011-10-07", "Cassville", 24, "Carl Junction", 10),
+    ("2011-08-26", "Clinton", 67, "Northeast (Kansas City)", 8),
+    ("2011-08-26", "Central (Kansas City)", 2, "Benton", 40),
+    ("2011-09-02", "Central (Kansas City)", 0, "Liberty North", 48),
+    ("2011-09-16", "Central (Kansas City)", 16, "East (Kansas City)", 6),
+    ("2011-09-22", "Central (Kansas City)", 46, "Northeast (Kansas City)", 8),
+    ("2011-09-30", "Central (Kansas City)", 12, "Washington", 30),
+    ("2011-10-21", "Central (Kansas City)", 6, "Pembroke Hill", 42),
+    ("2011-09-16", "Pembroke Hill", 53, "Northeast (Kansas City)", 0),
+    ("2011-10-01", "East (Kansas City)", 50, "Wentworth Military Academy", 0),
+    ("2011-10-20", "East (Kansas City)", 64, "Northeast (Kansas City)", 6),
+    ("2011-10-01", "Oak Grove", 29, "Grain Valley", 20),
+    ("2011-09-09", "Cameron", 25, "Grain Valley", 29),
+    ("2011-08-26", "Sikeston", 14, "Gateway", 34),
+    ("2011-09-23", "Sikeston", 35, "Jackson", 9),
+    ("2011-09-09", "North County", 7, "Jackson", 14),
+    ("2011-09-30", "North County", 65, "Windsor (Imperial)", 37),
+    ("2011-09-09", "Affton", 2, "Clayton", 49),
+    ("2011-09-16", "Affton", 21, "Normandy Collaborative", 34),
+    ("2011-09-23", "Affton", 6, "McCluer South-Berkeley", 54),
+    ("2011-10-08", "Affton", 14, "Jennings", 52),
+    ("2011-10-21", "Affton", 7, "Windsor (Imperial)", 14),
+    ("2011-09-02", "Gateway", 47, "Carnahan", 0),
+    ("2011-09-17", "Gateway", 50, "Beaumont", 0),
+    ("2011-10-07", "Gateway", 15, "Hickman", 27),
+    ("2011-10-15", "Gateway", 30, "Miller Career Academy", 14),
+    ("2011-10-22", "Gateway", 35, "Roosevelt", 28),
+    ("2011-09-08", "Miller Career Academy", 78, "Beaumont", 0),
+    ("2011-09-23", "Miller Career Academy", 44, "Sumner", 6),
+    ("2011-10-06", "Miller Career Academy", 8, "De Smet Jesuit", 29),
+    ("2011-10-29", "Miller Career Academy", 30, "Roosevelt", 12),
+    ("2011-08-27", "Roosevelt", 8, "Imagine College Prep Charter", 6),
+    ("2011-09-02", "Roosevelt", 6, "Chaminade College Prep", 54),
+    ("2011-09-17", "Roosevelt", 38, "Soldan International Studies", 33),
+    ("2011-10-01", "Roosevelt", 26, "Beaumont", 7),
+    ("2011-10-14", "Roosevelt", 16, "St. Mary's South Side", 37),
+    ("2011-09-10", "Soldan International Studies", 6, "Jennings", 38),
+    ("2011-10-01", "Soldan International Studies", 46, "Carnahan", 6),
+    ("2011-10-08", "Soldan International Studies", 43, "Transportation and Law", 0),
+    ("2011-10-22", "Soldan International Studies", 64, "Beaumont", 8),
+    ("2011-09-02", "Vashon", 22, "Union", 63),
+    ("2011-09-30", "Vashon", 22, "Jackson", 14),
+    ("2011-09-02", "Clayton", 14, "St. Francis Borgia", 31),
+    ("2011-09-24", "Clayton", 18, "Jennings", 42),
+    ("2011-10-01", "Clayton", 0, "Normandy Collaborative", 48),
+    ("2011-10-06", "Clayton", 28, "Westminster Christian Academy", 17),
+    ("2011-10-14", "Clayton", 22, "University City", 56),
+    ("2011-10-27", "Clayton", 7, "MICDS", 35),
+    ("2011-10-22", "MICDS", 50, "University City", 18),
+    ("2011-09-09", "University City", 25, "Parkway North", 20),
+    ("2011-09-16", "University City", 27, "Parkway Central", 57),
+    ("2011-09-24", "University City", 30, "Seckman", 34),
+    ("2011-10-07", "University City", 56, "Clayton", 22),
+    ("2011-10-15", "Jennings", 8, "Westminster Christian Academy", 14),
+    ("2011-10-28", "Jennings", 42, "St. Charles", 20),
+    ("2011-09-16", "St. Charles", 13, "St. Charles West", 49),
+    ("2011-10-21", "St. Charles", 33, "Westminster Christian Academy", 30),
+    ("2011-09-24", "Westminster Christian Academy", 6, "Trinity Catholic", 37),
+    ("2011-10-07", "St. Charles West", 36, "Imagine College Prep Charter", 12),
+    ("2011-10-14", "St. Charles West", 21, "St. Francis Borgia", 28),
+    ("2011-10-21", "St. Charles West", 21, "St. Dominic", 0),
+    ("2011-10-27", "St. Dominic", 14, "St. Francis Borgia", 27),
+    ("2011-09-21", "St. Francis Borgia", 27, "St. Dominic", 14),
+    ("2011-09-07", "St. Francis Borgia", 0, "Duchesne", 13),
+    ("2011-10-07", "Sullivan", 41, "St. James", 14),
+    ("2011-10-21", "Webb City", 56, "McDonald County", 19),
+    ("2011-10-27", "Webb City", 48, "Carl Junction", 7),
+    ("2011-10-27", "Grain Valley", 29, "Harrisonville", 49),
+    ("2011-09-02", "Harrisonville", 20, "Hazelwood West", 0),
+    ("2011-10-27", "Harrisonville", 49, "Grain Valley", 29),
+    ("2011-10-21", "Jackson", 8, "Seckman", 7),
+    ("2011-09-16", "Seckman", 35, "Parkway West", 0),
+    ("2011-09-30", "Seckman", 19, "Parkway North", 24),
+    ("2011-08-27", "Chaminade College Prep", 47, "Riverview Gardens", 32),
+    ("2011-09-02", "Chaminade College Prep", 54, "Roosevelt", 6),
+    ("2011-10-15", "Parkway Central", 26, "Parkway North", 7),
+    ("2011-09-16", "Parkway North", 35, "Timberland", 17),
+    ("2011-10-06", "Parkway North", 35, "Parkway West", 7),
+    ("2011-09-03", "Hazelwood East", 12, "De Smet Jesuit", 14),
+    ("2011-09-17", "Hazelwood East", 34, "Hazelwood West", 10),
+    ("2011-09-24", "Hazelwood East", 36, "Hazelwood Central", 18),
+    ("2011-10-08", "Hazelwood East", 8, "Ritenour", 16),
+    ("2011-10-22", "Hazelwood East", 64, "Riverview Gardens", 44),
+    ("2011-10-29", "Hazelwood East", 37, "Normandy Collaborative", 14),
+    ("2011-10-01", "Normandy Collaborative", 48, "Clayton", 0),
+    ("2011-10-15", "Normandy Collaborative", 38, "Riverview Gardens", 18),
+    ("2011-09-09", "Riverview Gardens", 12, "Ritenour", 53),
+    ("2011-09-24", "Riverview Gardens", 14, "Hazelwood West", 28),
+    ("2011-10-01", "Riverview Gardens", 0, "Hazelwood Central", 28),
+    ("2011-10-22", "Riverview Gardens", 44, "Hazelwood East", 64),
+    ("2011-08-26", "Vianney", 33, "Ritenour", 40),
+    ("2011-09-23", "Camdenton", 9, "Kickapoo", 15),
+    ("2011-08-26", "Waynesville", 10, "Kickapoo", 20),
+    ("2011-09-30", "Central (Springfield)", 40, "Glendale", 47),
+    ("2011-10-27", "Lee's Summit", 34, "Ruskin", 8),
+    ("2011-09-30", "Ruskin", 24, "Central (St. Joseph)", 45),
+    ("2011-08-26", "De Smet Jesuit", 28, "Hazelwood Central", 0),
+    ("2011-10-21", "Christian Brothers College", 16, "Lafayette (Wildwood)", 7),
+    ("2011-10-21", "Lafayette (Wildwood)", 7, "Christian Brothers College", 16),
+    ("2011-10-21", "Hazelwood Central", 14, "Ritenour", 8),
+    ("2011-10-29", "Hazelwood Central", 41, "Hazelwood West", 6),
+    ("2011-09-02", "Hazelwood West", 0, "Harrisonville", 20),
+    ("2011-09-09", "Hazelwood West", 9, "Hickman", 27),
+    ("2011-10-14", "Hazelwood West", 8, "Ritenour", 56),
+    ("2011-10-15", "Ritenour", 56, "Hazelwood West", 8),
+    ("2011-09-02", "Francis Howell North", 0, "Ft. Zumwalt West", 52),
+    ("2011-10-14", "Ft. Zumwalt West", 42, "Hickman", 12),
+    ("2011-10-28", "Ft. Zumwalt West", 28, "Troy Buchanan", 7),
+    ("2011-09-10", "Hickman", 27, "Hazelwood West", 9),
+    ("2011-10-21", "Hickman", 33, "Troy Buchanan", 0),
+    ("2011-10-20", "Blue Springs", 30, "Liberty", 21),
+    ("2011-10-20", "Liberty", 21, "Blue Springs", 30),
+]
  
 HEADERS = {
     "User-Agent": (
@@ -67,10 +358,8 @@ def build_id_to_classname(team_to_class, schools_csv=SCHOOLS_CSV):
     """
     MANUAL_OVERRIDES = {
         "271": "Clopton with Elsberry",
-        "272": "Cole Camp with Green Ridge",
         "331": "King City with Pattonsburg",
         "126": "Lockwood with Golden City",
-        "568": "McAuley Catholic with New Heights Christian",
         "421": "Princeton with Mercer",
         "424": "Rich Hill with Hume",
         "431": "Salisbury",
@@ -91,8 +380,12 @@ def build_id_to_classname(team_to_class, schools_csv=SCHOOLS_CSV):
         "20": "Appleton City with Montrose",
         "275": "Drexel with Miami (Amoret)",
         "575": "Renaissance Academy Charter",
-        "578": "Rock Bridge with Columbia Independent",
         "172": "St. James",
+        "35": "DeSoto with Kingston",
+        "917": "Father Tolton with Calvary Lutheran",
+        "342": "Liberal with Bronaugh",
+        "776": "Transportation and Law with Beaumont",
+        "483": "Van-Far with Community",
     }
  
     df = pd.read_csv(schools_csv)
@@ -466,7 +759,7 @@ def save_class_jsons(off_rating, def_rating, ovr_rating, league_avg,
             print(f"  Class {cls}: no teams found — skipping.")
             continue
  
-        path = f"football_ratings_2011_class{cls}.json"
+        path = f"football_ratings_2010_class{cls}.json"
         output = {
             "last_updated":   datetime.now().strftime("%B %d, %Y at %I:%M %p"),
             "league_average": round(league_avg, 2),
@@ -483,12 +776,89 @@ def save_class_jsons(off_rating, def_rating, ovr_rating, league_avg,
         ))
  
  
+ 
+# ---------------------------------------------------------------------------
+# CSV RANKINGS OUTPUT
+# ---------------------------------------------------------------------------
+ 
+def save_rankings_csv(off_rating, def_rating, ovr_rating,
+                      team_to_class, team_to_district,
+                      class_filter=None):
+    """
+    Save a rankings CSV for either all teams (class_filter=None) or a
+    specific class.  Rankings (OFF Rank, DEF Rank, OVR Rank) are computed
+    within the pool so class CSVs show class-specific ranks.
+ 
+    Columns: School, OFF Rating, DEF Rating, OVR Rating,
+             OFF Rank, DEF Rank, OVR Rank
+    """
+    all_teams = list(ovr_rating.keys())
+ 
+    pool = (
+        [t for t in all_teams if team_to_class.get(t) == class_filter]
+        if class_filter is not None
+        else all_teams
+    )
+ 
+    if not pool:
+        label = f"Class {class_filter}" if class_filter else "Overall"
+        print(f"  {label}: no teams — skipping CSV.")
+        return
+ 
+    ovr_sorted = sorted(pool, key=lambda t: ovr_rating[t], reverse=True)
+    off_sorted = sorted(pool, key=lambda t: off_rating[t], reverse=True)
+    def_sorted = sorted(pool, key=lambda t: def_rating[t], reverse=True)
+ 
+    ovr_rank = {t: i + 1 for i, t in enumerate(ovr_sorted)}
+    off_rank = {t: i + 1 for i, t in enumerate(off_sorted)}
+    def_rank = {t: i + 1 for i, t in enumerate(def_sorted)}
+ 
+    rows = [
+        {
+            "School":      t,
+            "OFF Rating":  round(off_rating[t], 2),
+            "DEF Rating":  round(def_rating[t], 2),
+            "OVR Rating":  round(ovr_rating[t], 2),
+            "OFF Rank":    off_rank[t],
+            "DEF Rank":    def_rank[t],
+            "OVR Rank":    ovr_rank[t],
+        }
+        for t in ovr_sorted
+    ]
+ 
+    df = pd.DataFrame(rows, columns=[
+        "School", "OFF Rating", "DEF Rating", "OVR Rating",
+        "OFF Rank", "DEF Rank", "OVR Rank"
+    ])
+ 
+    if class_filter is None:
+        path  = "football_rankings_2010_all.csv"
+        label = "All teams"
+    else:
+        path  = f"football_rankings_2010_class{class_filter}.csv"
+        label = f"Class {class_filter}"
+ 
+    df.to_csv(path, index=False)
+    print(f"  {label}: {len(df)} teams — {path}")
+ 
+ 
+def save_all_rankings_csvs(off_rating, def_rating, ovr_rating,
+                           team_to_class, team_to_district):
+    """Save overall + one CSV per class (1-6)."""
+    save_rankings_csv(off_rating, def_rating, ovr_rating,
+                      team_to_class, team_to_district,
+                      class_filter=None)
+    for cls in range(1, 7):
+        save_rankings_csv(off_rating, def_rating, ovr_rating,
+                          team_to_class, team_to_district,
+                          class_filter=cls)
+ 
 # ---------------------------------------------------------------------------
 # MAIN
 # ---------------------------------------------------------------------------
  
 if __name__ == "__main__":
-    print("=== MSHSAA Football Ratings 2011 ===")
+    print("=== MSHSAA Football Ratings 2010 ===")
  
     print("\nLoading classifications...")
     team_to_class, team_to_district = load_classifications()
@@ -504,6 +874,10 @@ if __name__ == "__main__":
     if not all_games:
         print("No games found — exiting.")
         exit(1)
+ 
+    if MANUAL_GAMES:
+        print(f"\nAdding {len(MANUAL_GAMES)} manual game(s)...")
+        all_games.extend(MANUAL_GAMES)
  
     print("\nDeduplicating games...")
     all_games = deduplicate_games(all_games)
@@ -525,5 +899,9 @@ if __name__ == "__main__":
     print("\nSaving per-class ratings JSONs...")
     save_class_jsons(off_rating, def_rating, ovr_rating, league_avg,
                      team_to_class, team_to_district)
+ 
+    print("\nSaving rankings CSVs...")
+    save_all_rankings_csvs(off_rating, def_rating, ovr_rating,
+                           team_to_class, team_to_district)
  
     print("\n=== Done ===")
