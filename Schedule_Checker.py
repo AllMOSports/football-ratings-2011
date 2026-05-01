@@ -97,7 +97,6 @@ def load_scoreboard(path):
     We use a 7-day window instead of exact date matching because MSHSAA schedule pages
     store the scheduled/week-end date, not always the actual game date.
     """
-    from collections import defaultdict
     df = pd.read_csv(path)
     df = df[["Date", "Home Team", "Away Team"]].dropna(subset=["Home Team", "Away Team"])
     df["Date"]      = df["Date"].astype(str).str.strip()
@@ -126,9 +125,14 @@ def game_in_scoreboard(team_norm, opp_norm, game_date_str, pair_dates, window_da
     pair = frozenset([team_norm, opp_norm])
     if pair not in pair_dates:
         return False
-    try:
-        gdate = datetime.strptime(game_date_str, "%m/%d/%Y")
-    except Exception:
+    gdate = None
+    for fmt in ("%m/%d/%Y", "%Y-%m-%d"):
+        try:
+            gdate = datetime.strptime(game_date_str, fmt)
+            break
+        except ValueError:
+            pass
+    if gdate is None:
         return False
     return any(
         sbdate is not None and abs((sbdate - gdate).days) <= window_days
@@ -277,9 +281,13 @@ def parse_schedule_page(html):
         score_team  = int(score_match.group(1)) if score_match else None
         score_opp   = int(score_match.group(2)) if score_match else None
  
-        date_clean = re.match(r"(\d{1,2}/\d{1,2})", date_text).group(1)
+        # Zero-pad month and day so strptime("%m/%d/%Y") always succeeds
+        m = re.match(r"(\d{1,2})/(\d{1,2})", date_text)
+        month = m.group(1).zfill(2)
+        day   = m.group(2).zfill(2)
+ 
         games.append({
-            "date":          date_clean + "/2011",
+            "date":          f"{month}/{day}/2011",
             "opponent":      opp_clean,
             "opponent_norm": normalize(opp_clean),
             "home_away":     home_away,
