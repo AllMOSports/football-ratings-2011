@@ -11,17 +11,23 @@ import time
 # CONFIGURATION
 # ---------------------------------------------------------------------------
  
+SEASON_YEAR   = 2011
 SEASON_START  = date(2011, 8, 1)
 SEASON_END    = date(2011, 12, 15)
 BASE_URL      = "https://www.mshsaa.org/activities/scoreboard.aspx?alg=19&date={}"
 MAX_POINTS    = 100
-OUTPUT_PATH   = "football_ratings_2011.json"
-CSV_PATH      = "football_scoreboard_2011.csv"
+OUTPUT_PATH   = f"football_ratings_{SEASON_YEAR}.json"
+CSV_PATH      = f"football_scoreboard_{SEASON_YEAR}.csv"
 CLASSIFICATIONS_PATH  = "classifications.json"
 SCHOOLS_CSV           = "mshsaa_schools.csv"
 ITERATIONS            = 1000
 LEARNING_RATE         = 0.1
-COMPETITIVE_THRESHOLD = 40
+ 
+# --- v2 rating engine settings (soft weighting + shrinkage, replaces the
+#     old hard Phase-2 cutoff) ---
+COMPETITIVE_THRESHOLD = 40    # now the "half-weight" point of a smooth decay curve
+REGULARIZATION_K      = 3.0   # pseudo-games added to every team's denominator (shrinkage)
+MOV_CAP               = 28    # max points of "error" any single game can contribute
  
 # ---------------------------------------------------------------------------
 # MANUAL GAMES (not listed on MSHSAA Scoreboard)
@@ -31,287 +37,11 @@ COMPETITIVE_THRESHOLD = 40
 # Team names must match exactly the names in classifications.json.
  
 MANUAL_GAMES = [
-    ("2011-08-26", "Portageville", 0, "Caruthersville", 58),
-    ("2011-09-09", "Portageville", 48, "Charleston", 21),
-    ("2011-09-16", "Portageville", 24, "Malden", 41),
-    ("2011-09-23", "Portageville", 22, "Kennett", 40),
-    ("2011-09-30", "Portageville", 30, "Scott City", 31),
-    ("2011-10-07", "Portageville", 46, "East Prairie", 38),
-    ("2011-08-26", "St. Vincent", 13, "Central (Park Hills)", 28),
-    ("2011-09-23", "St. Vincent", 35, "St. Pius X (Festus)", 21),
-    ("2011-10-04", "St. Vincent", 35, "Grandview", 20),
-    ("2011-10-21", "St. Vincent", 7, "Valle Catholic", 48),
-    ("2011-09-16", "Valle Catholic", 42, "Grandview (Hillsboro)", 14),
-    ("2011-10-07", "Valle Catholic", 62, "St. Pius X (Festus)", 0),
-    ("2011-09-23", "Greenfield", 14, "Hogan Prep Academy Charter", 35),
-    ("2011-08-26", "Sacred Heart", 18, "Milan", 49),
-    ("2011-09-16", "Sacred Heart", 54, "Wentworth Military Academy", 0),
-    ("2011-10-07", "Sacred Heart", 32, "Rich Hill with Hume", 0),
-    ("2011-10-07", "Tipton", 26, "South Callaway", 20),
-    ("2011-09-09", "Windsor", 30, "St. Mary's (Independence)", 0),
-    ("2011-10-08", "Windsor", 36, "Wentworth Military Academy", 0),
-    ("2011-09-30", "Concordia", 32, "Wellington-Napoleon", 48),
-    ("2011-09-09", "Crest Ridge", 0, "Wellington-Napoleon", 46),
-    ("2011-09-16", "Santa Fe", 0, "Wellington-Napoleon", 39),
-    ("2011-10-06", "University Academy Charter", 24, "Pembroke Hill", 48),
-    ("2011-10-15", "University Academy Charter", 48, "Drexel with Miami (Amoret)", 28),
-    ("2011-10-28", "University Academy Charter", 21, "Midway", 20),
-    ("2011-09-02", "Louisiana", 34, "Highland", 6),
-    ("2011-10-14", "Louisiana", 13, "South Shelby", 48),
-    ("2011-10-28", "Louisiana", 36, "Van-Far", 8),
-    ("2011-10-27", "Paris", 21, "South Shelby", 44),
-    ("2011-08-26", "South Shelby", 20, "Trenton", 0),
-    ("2011-09-02", "South Shelby", 33, "Mark Twain", 12),
-    ("2011-09-09", "South Shelby", 0, "Macon", 52),
-    ("2011-09-16", "South Shelby", 6, "Clark County", 41),
-    ("2011-09-30", "South Shelby", 14, "Palmyra", 28),
-    ("2011-10-07", "South Shelby", 34, "Highland", 32),
-    ("2011-10-21", "South Shelby", 51, "Van-Far", 6),
-    ("2011-10-27", "South Shelby", 44, "Paris", 21),
-    ("2011-08-26", "Van-Far", 6, "Orchard Farm", 47),
-    ("2011-09-16", "Van-Far", 24, "Winfield", 29),
-    ("2011-09-23", "Van-Far", 30, "Wright City", 44),
-    ("2011-08-26", "Knox County", 18, "Highland", 6),
-    ("2011-09-09", "Knox County", 54, "North Shelby", 0),
-    ("2011-09-16", "Knox County", 48, "Fayette", 13),
-    ("2011-09-23", "Knox County", 16, "Schuyler County", 34),
-    ("2011-10-07", "Knox County", 6, "Milan", 41),
-    ("2011-10-14", "Knox County", 6, "Scotland County", 35),
-    ("2011-10-21", "Knox County", 44, "North Shelby", 0),
-    ("2011-10-28", "Knox County", 34, "Schuyler County", 13),
-    ("2011-09-09", "North Shelby", 6, "Knox County", 54),
-    ("2011-09-16", "North Shelby", 0, "Milan", 74),
-    ("2011-09-30", "North Shelby", 14, "Schuyler County", 40),
-    ("2011-10-07", "North Shelby", 28, "Scotland County", 69),
-    ("2011-10-14", "North Shelby", 0, "Schuyler County", 47),
-    ("2011-10-21", "North Shelby", 0, "Knox County", 44),
-    ("2011-10-27", "North Shelby", 6, "Scotland County", 50),
-    ("2011-09-02", "Schuyler County", 0, "Milan", 34),
-    ("2011-10-20", "Schuyler County", 14, "Scotland County", 28),
-    ("2011-09-09", "Scotland County", 18, "Highland", 34),
-    ("2011-09-30", "Scotland County", 0, "Milan", 54),
-    ("2011-10-14", "Scotland County", 35, "Knox County", 6),
-    ("2011-10-27", "Scotland County", 50, "North Shelby", 6),
-    ("2011-08-26", "Fayette", 13, "South Callaway", 41),
-    ("2011-10-21", "Marceline", 6, "Milan", 7),
-    ("2011-09-09", "Milan", 14, "Palmyra", 7),
-    ("2011-09-23", "Milan", 35, "Braymer", 15),
-    ("2011-10-14", "Milan", 35, "Princeton with Mercer", 16),
-    ("2011-10-21", "Milan", 7, "Marceline", 6),
-    ("2011-10-28", "Milan", 49, "Putnam County", 14),
-    ("2011-10-14", "Orrick", 12, "Wellington-Napoleon", 53),
-    ("2011-10-27", "Orrick", 28, "Wentworth Military Academy", 0),
-    ("2011-08-26", "Wellington-Napoleon", 53, "Lathrop", 14),
-    ("2011-09-23", "Wellington-Napoleon", 55, "St. Paul Lutheran (Concordia)", 20),
-    ("2011-10-07", "Wellington-Napoleon", 53, "Sweet Springs with Malta Bend", 14),
-    ("2011-10-14", "Wellington-Napoleon", 53, "Orrick", 12),
-    ("2011-10-21", "Wellington-Napoleon", 60, "Wentworth Military Academy", 6),
-    ("2011-10-27", "Wellington-Napoleon", 54, "St. Mary's (Independence)", 6),
-    ("2011-09-16", "Gallatin", 30, "Maysville", 7),
-    ("2011-10-27", "Gallatin", 26, "South Harrison", 42),
-    ("2011-09-23", "South Harrison", 36, "Maysville", 7),
-    ("2011-09-16", "Maysville", 7, "Gallatin", 30),
-    ("2011-08-26", "Charleston", 27, "Kennett", 22),
-    ("2011-09-16", "East Prairie", 13, "Kennett", 28),
-    ("2011-09-30", "Malden", 75, "Kennett", 59),
-    ("2011-09-03", "St. Pius X (Festus)", 6, "Soldan International Studies", 53),
-    ("2011-09-09", "St. Pius X (Festus)", 15, "Grandview (Hillsboro)", 28),
-    ("2011-10-07", "Brentwood", 21, "North Callaway", 26),
-    ("2011-09-16", "Grandview (Hillsboro)", 14, "Valle Catholic", 42),
-    ("2011-10-14", "Grandview (Hillsboro)", 21, "Principia", 28),
-    ("2011-09-16", "Principia", 14, "Lutheran South", 41),
-    ("2011-10-01", "Principia", 0, "Lutheran North", 41),
-    ("2011-09-24", "Lift for Life Academy Charter", 32, "Beaumont", 0),
-    ("2011-10-14", "Lift for Life Academy Charter", 22, "Transportation and Law", 6),
-    ("2011-10-22", "Lift for Life Academy Charter", 20, "Carnahan", 30),
-    ("2011-10-28", "Lift for Life Academy Charter", 6, "Maplewood-Richmond Hts.", 75),
-    ("2011-08-26", "Maplewood-Richmond Hts.", 35, "MICDS", 36),
-    ("2011-09-23", "Maplewood-Richmond Hts.", 31, "Central (Park Hills)", 6),
-    ("2011-10-01", "Maplewood-Richmond Hts.", 52, "Perryville", 0),
-    ("2011-10-15", "Maplewood-Richmond Hts.", 48, "Carnahan", 8),
-    ("2011-10-21", "Maplewood-Richmond Hts.", 54, "Transportation and Law", 7),
-    ("2011-10-27", "Maplewood-Richmond Hts.", 75, "Lift for Life Academy Charter", 6),
-    ("2011-08-26", "Cuba", 6, "St. James", 43),
-    ("2011-09-16", "Cuba", 6, "South Callaway", 48),
-    ("2011-08-26", "Lamar", 34, "Carl Junction", 6),
-    ("2011-09-02", "Lamar", 40, "Aurora", 19),
-    ("2011-09-30", "Lamar", 21, "Cassville", 49),
-    ("2011-10-14", "Blair Oaks", 19, "South Callaway", 45),
-    ("2011-09-02", "Hermann", 26, "St. James", 32),
-    ("2011-09-23", "Hermann", 34, "Owensville", 54),
-    ("2011-10-27", "Hermann", 0, "South Callaway", 52),
-    ("2011-10-21", "Montgomery County", 14, "South Callaway", 41),
-    ("2011-09-02", "South Callaway", 34, "Hallsville", 7),
-    ("2011-09-09", "South Callaway", 28, "North Callaway", 0),
-    ("2011-09-23", "South Callaway", 50, "Southern Boone", 28),
-    ("2011-09-30", "South Callaway", 39, "Orchard Farm", 3),
-    ("2011-10-07", "South Callaway", 20, "Tipton", 26),
-    ("2011-09-02", "Hallsville", 7, "South Callaway", 34),
-    ("2011-09-16", "Hallsville", 12, "North Callaway", 37),
-    ("2011-10-07", "Hallsville", 40, "Winfield", 0),
-    ("2011-09-30", "Palmyra", 28, "South Shelby", 14),
-    ("2011-09-29", "Carrollton", 6, "Hogan Prep Academy Charter", 40),
-    ("2011-10-14", "Hogan Prep Academy Charter", 39, "Lathrop", 29),
-    ("2011-10-27", "Central (New Madrid County)", 0, "Kennett", 25),
-    ("2011-10-14", "Dexter", 68, "Kennett", 20),
-    ("2011-10-21", "Fredericktown", 63, "Kennett", 14),
-    ("2011-10-07", "Kennett", 0, "Sikeston", 56),
-    ("2011-10-01", "Ste. Genevieve", 21, "John Burroughs", 41),
-    ("2011-08-27", "Confluence Prep Academy Charter", 12, "Soldan International Studies", 52),
-    ("2011-09-03", "Confluence Prep Academy Charter", 30, "Wentworth Military Academy", 0),
-    ("2011-08-27", "John Burroughs", 37, "Pembroke Hill", 30),
-    ("2011-09-10", "John Burroughs", 20, "MICDS", 45),
-    ("2011-09-17", "John Burroughs", 42, "Windsor (Imperial)", 18),
-    ("2011-09-24", "John Burroughs", 53, "Lutheran North", 16),
-    ("2011-10-01", "John Burroughs", 41, "Ste. Genevieve", 21),
-    ("2011-10-22", "John Burroughs", 45, "Imagine College Prep Charter", 12),
-    ("2011-09-17", "Priory", 14, "Lutheran North", 49),
-    ("2011-10-15", "Priory", 42, "Imagine College Prep Charter", 32),
-    ("2011-08-26", "Cardinal Ritter", 14, "St. Dominic", 27),
-    ("2011-09-16", "Cardinal Ritter", 12, "Duchesne", 7),
-    ("2011-10-21", "Cardinal Ritter", 26, "Lutheran North", 28),
-    ("2011-10-28", "Cardinal Ritter", 20, "Trinity Catholic", 36),
-    ("2011-08-27", "Lutheran North", 42, "Clayton", 14),
-    ("2011-09-03", "Lutheran North", 18, "Westminster Christian Academy", 7),
-    ("2011-10-14", "Lutheran North", 44, "Trinity Catholic", 31),
-    ("2011-09-03", "Bowling Green", 7, "Miller Career Academy", 68),
-    ("2011-09-16", "Orchard Farm", 19, "Southern Boone", 56),
-    ("2011-10-14", "Orchard Farm", 42, "Wright City", 0),
-    ("2011-10-21", "Orchard Farm", 28, "Winfield", 21),
-    ("2011-10-07", "Winfield", 0, "Hallsville", 40),
-    ("2011-10-27", "Winfield", 20, "Wright City", 13),
-    ("2011-10-14", "Wright City", 0, "Orchard Farm", 42),
-    ("2011-09-23", "Missouri Military Academy", 42, "Wentworth Military Academy", 0),
-    ("2011-10-27", "North Callaway", 38, "Southern Boone", 32),
-    ("2011-10-14", "Osage", 53, "St. James", 7),
-    ("2011-09-02", "Owensville", 6, "Sullivan", 44),
-    ("2011-09-16", "Owensville", 0, "St. Clair", 28),
-    ("2011-09-30", "Owensville", 33, "Pacific", 22),
-    ("2011-10-07", "Owensville", 28, "Union", 68),
-    ("2011-10-27", "Owensville", 80, "St. James", 75),
-    ("2011-09-23", "Salem", 6, "Mountain Grove", 7),
-    ("2011-10-20", "Salem", 43, "St. James", 27),
-    ("2011-08-26", "St. James", 43, "Cuba", 6),
-    ("2011-09-09", "St. James", 12, "Union", 48),
-    ("2011-09-16", "St. James", 39, "Cabool", 13),
-    ("2011-09-23", "St. James", 21, "Pacific", 24),
-    ("2011-09-30", "St. James", 0, "St. Clair", 49),
-    ("2011-10-07", "St. James", 14, "Sullivan", 41),
-    ("2011-09-23", "Mountain Grove", 7, "Salem", 6),
-    ("2011-09-09", "Aurora", 18, "Carl Junction", 13),
-    ("2011-09-16", "Aurora", 7, "Cassville", 21),
-    ("2011-10-07", "Cassville", 24, "Carl Junction", 10),
-    ("2011-08-26", "Clinton", 67, "Northeast (Kansas City)", 8),
-    ("2011-08-26", "Central (Kansas City)", 2, "Benton", 40),
-    ("2011-09-02", "Central (Kansas City)", 0, "Liberty North", 48),
-    ("2011-09-16", "Central (Kansas City)", 16, "East (Kansas City)", 6),
-    ("2011-09-22", "Central (Kansas City)", 46, "Northeast (Kansas City)", 8),
-    ("2011-09-30", "Central (Kansas City)", 12, "Washington", 30),
-    ("2011-10-21", "Central (Kansas City)", 6, "Pembroke Hill", 42),
-    ("2011-09-16", "Pembroke Hill", 53, "Northeast (Kansas City)", 0),
-    ("2011-10-01", "East (Kansas City)", 50, "Wentworth Military Academy", 0),
-    ("2011-10-20", "East (Kansas City)", 64, "Northeast (Kansas City)", 6),
-    ("2011-10-01", "Oak Grove", 29, "Grain Valley", 20),
-    ("2011-09-09", "Cameron", 25, "Grain Valley", 29),
-    ("2011-08-26", "Sikeston", 14, "Gateway", 34),
-    ("2011-09-23", "Sikeston", 35, "Jackson", 9),
-    ("2011-09-09", "North County", 7, "Jackson", 14),
-    ("2011-09-30", "North County", 65, "Windsor (Imperial)", 37),
-    ("2011-09-09", "Affton", 2, "Clayton", 49),
-    ("2011-09-16", "Affton", 21, "Normandy Collaborative", 34),
-    ("2011-09-23", "Affton", 6, "McCluer South-Berkeley", 54),
-    ("2011-10-08", "Affton", 14, "Jennings", 52),
-    ("2011-10-21", "Affton", 7, "Windsor (Imperial)", 14),
-    ("2011-09-02", "Gateway", 47, "Carnahan", 0),
-    ("2011-09-17", "Gateway", 50, "Beaumont", 0),
-    ("2011-10-07", "Gateway", 15, "Hickman", 27),
-    ("2011-10-15", "Gateway", 30, "Miller Career Academy", 14),
-    ("2011-10-22", "Gateway", 35, "Roosevelt", 28),
-    ("2011-09-08", "Miller Career Academy", 78, "Beaumont", 0),
-    ("2011-09-23", "Miller Career Academy", 44, "Sumner", 6),
-    ("2011-10-06", "Miller Career Academy", 8, "De Smet Jesuit", 29),
-    ("2011-10-29", "Miller Career Academy", 30, "Roosevelt", 12),
-    ("2011-08-27", "Roosevelt", 8, "Imagine College Prep Charter", 6),
-    ("2011-09-02", "Roosevelt", 6, "Chaminade College Prep", 54),
-    ("2011-09-17", "Roosevelt", 38, "Soldan International Studies", 33),
-    ("2011-10-01", "Roosevelt", 26, "Beaumont", 7),
-    ("2011-10-14", "Roosevelt", 16, "St. Mary's South Side", 37),
-    ("2011-09-10", "Soldan International Studies", 6, "Jennings", 38),
-    ("2011-10-01", "Soldan International Studies", 46, "Carnahan", 6),
-    ("2011-10-08", "Soldan International Studies", 43, "Transportation and Law", 0),
-    ("2011-10-22", "Soldan International Studies", 64, "Beaumont", 8),
-    ("2011-09-02", "Vashon", 22, "Union", 63),
-    ("2011-09-30", "Vashon", 22, "Jackson", 14),
-    ("2011-09-02", "Clayton", 14, "St. Francis Borgia", 31),
-    ("2011-09-24", "Clayton", 18, "Jennings", 42),
-    ("2011-10-01", "Clayton", 0, "Normandy Collaborative", 48),
-    ("2011-10-06", "Clayton", 28, "Westminster Christian Academy", 17),
-    ("2011-10-14", "Clayton", 22, "University City", 56),
-    ("2011-10-27", "Clayton", 7, "MICDS", 35),
-    ("2011-10-22", "MICDS", 50, "University City", 18),
-    ("2011-09-09", "University City", 25, "Parkway North", 20),
-    ("2011-09-16", "University City", 27, "Parkway Central", 57),
-    ("2011-09-24", "University City", 30, "Seckman", 34),
-    ("2011-10-07", "University City", 56, "Clayton", 22),
-    ("2011-10-15", "Jennings", 8, "Westminster Christian Academy", 14),
-    ("2011-10-28", "Jennings", 42, "St. Charles", 20),
-    ("2011-09-16", "St. Charles", 13, "St. Charles West", 49),
-    ("2011-10-21", "St. Charles", 33, "Westminster Christian Academy", 30),
-    ("2011-09-24", "Westminster Christian Academy", 6, "Trinity Catholic", 37),
-    ("2011-10-07", "St. Charles West", 36, "Imagine College Prep Charter", 12),
-    ("2011-10-14", "St. Charles West", 21, "St. Francis Borgia", 28),
-    ("2011-10-21", "St. Charles West", 21, "St. Dominic", 0),
-    ("2011-10-27", "St. Dominic", 14, "St. Francis Borgia", 27),
-    ("2011-09-21", "St. Francis Borgia", 27, "St. Dominic", 14),
-    ("2011-09-07", "St. Francis Borgia", 0, "Duchesne", 13),
-    ("2011-10-07", "Sullivan", 41, "St. James", 14),
-    ("2011-10-21", "Webb City", 56, "McDonald County", 19),
-    ("2011-10-27", "Webb City", 48, "Carl Junction", 7),
-    ("2011-10-27", "Grain Valley", 29, "Harrisonville", 49),
-    ("2011-09-02", "Harrisonville", 20, "Hazelwood West", 0),
-    ("2011-10-27", "Harrisonville", 49, "Grain Valley", 29),
-    ("2011-10-21", "Jackson", 8, "Seckman", 7),
-    ("2011-09-16", "Seckman", 35, "Parkway West", 0),
-    ("2011-09-30", "Seckman", 19, "Parkway North", 24),
-    ("2011-08-27", "Chaminade College Prep", 47, "Riverview Gardens", 32),
-    ("2011-09-02", "Chaminade College Prep", 54, "Roosevelt", 6),
-    ("2011-10-15", "Parkway Central", 26, "Parkway North", 7),
-    ("2011-09-16", "Parkway North", 35, "Timberland", 17),
-    ("2011-10-06", "Parkway North", 35, "Parkway West", 7),
-    ("2011-09-03", "Hazelwood East", 12, "De Smet Jesuit", 14),
-    ("2011-09-17", "Hazelwood East", 34, "Hazelwood West", 10),
-    ("2011-09-24", "Hazelwood East", 36, "Hazelwood Central", 18),
-    ("2011-10-08", "Hazelwood East", 8, "Ritenour", 16),
-    ("2011-10-22", "Hazelwood East", 64, "Riverview Gardens", 44),
-    ("2011-10-29", "Hazelwood East", 37, "Normandy Collaborative", 14),
-    ("2011-10-01", "Normandy Collaborative", 48, "Clayton", 0),
-    ("2011-10-15", "Normandy Collaborative", 38, "Riverview Gardens", 18),
-    ("2011-09-09", "Riverview Gardens", 12, "Ritenour", 53),
-    ("2011-09-24", "Riverview Gardens", 14, "Hazelwood West", 28),
-    ("2011-10-01", "Riverview Gardens", 0, "Hazelwood Central", 28),
-    ("2011-10-22", "Riverview Gardens", 44, "Hazelwood East", 64),
-    ("2011-08-26", "Vianney", 33, "Ritenour", 40),
-    ("2011-09-23", "Camdenton", 9, "Kickapoo", 15),
-    ("2011-08-26", "Waynesville", 10, "Kickapoo", 20),
-    ("2011-09-30", "Central (Springfield)", 40, "Glendale", 47),
-    ("2011-10-27", "Lee's Summit", 34, "Ruskin", 8),
-    ("2011-09-30", "Ruskin", 24, "Central (St. Joseph)", 45),
-    ("2011-08-26", "De Smet Jesuit", 28, "Hazelwood Central", 0),
-    ("2011-10-21", "Christian Brothers College", 16, "Lafayette (Wildwood)", 7),
-    ("2011-10-21", "Lafayette (Wildwood)", 7, "Christian Brothers College", 16),
-    ("2011-10-21", "Hazelwood Central", 14, "Ritenour", 8),
-    ("2011-10-29", "Hazelwood Central", 41, "Hazelwood West", 6),
-    ("2011-09-02", "Hazelwood West", 0, "Harrisonville", 20),
-    ("2011-09-09", "Hazelwood West", 9, "Hickman", 27),
-    ("2011-10-14", "Hazelwood West", 8, "Ritenour", 56),
-    ("2011-10-15", "Ritenour", 56, "Hazelwood West", 8),
-    ("2011-09-02", "Francis Howell North", 0, "Ft. Zumwalt West", 52),
-    ("2011-10-14", "Ft. Zumwalt West", 42, "Hickman", 12),
-    ("2011-10-28", "Ft. Zumwalt West", 28, "Troy Buchanan", 7),
-    ("2011-09-10", "Hickman", 27, "Hazelwood West", 9),
-    ("2011-10-21", "Hickman", 33, "Troy Buchanan", 0),
-    ("2011-10-20", "Blue Springs", 30, "Liberty", 21),
-    ("2011-10-20", "Liberty", 21, "Blue Springs", 30),
+    # NOTE: These are manually-added 2011 games that don't appear on the
+    # MSHSAA scoreboard. The list has been cleared for 2011 since none of
+    # the 2011 entries apply to this season. Re-populate with any 2011
+    # games missing from the scraped scoreboard, in the same format:
+    # ("YYYY-MM-DD", "Team 1 Name", score1, "Team 2 Name", score2)
 ]
  
 HEADERS = {
@@ -609,56 +339,69 @@ def save_csv(all_games):
  
  
 # ---------------------------------------------------------------------------
-# RATING ENGINE
+# RATING ENGINE (v2 -- soft competitiveness weighting + shrinkage regularization)
 # ---------------------------------------------------------------------------
+#
+# Replaces the old two-phase (all games, then hard <=40pt cutoff) approach.
+# A dominant team no longer has its rating fully decided by 1-2 close games:
+#   1. competitiveness_weight() gives every game a smooth weight based on
+#      the current rating gap, instead of an all-or-nothing 40-point cutoff.
+#   2. REGULARIZATION_K shrinks updates for teams with little competitive
+#      signal, instead of letting a tiny sample fully drive their rating.
+#   3. MOV_CAP bounds how much error any single game -- even a fully-weighted
+#      one -- can contribute, so no one result can swing a rating too hard.
+ 
+def competitiveness_weight(gap, scale=COMPETITIVE_THRESHOLD):
+    """
+    Smooth weight in (0, 1] based on the current OVR gap between two teams.
+    gap=0            -> weight 1.0 (fully counted)
+    gap=scale (40)   -> weight 0.5 (half counted)
+    gap=2*scale (80) -> weight 0.2 (mostly discounted, never fully zero)
+    """
+    return 1.0 / (1.0 + (gap / scale) ** 2)
+ 
  
 def run_iterations(games, teams, off_rating, def_rating, league_avg,
-                   iterations, phase_label, ovr_filter=None):
+                   iterations, phase_label="Fit"):
     for iteration in range(iterations):
-        off_error    = {t: 0.0 for t in teams}
-        def_error    = {t: 0.0 for t in teams}
-        games_played = {t: 0   for t in teams}
+        off_error  = {t: 0.0 for t in teams}
+        def_error  = {t: 0.0 for t in teams}
+        weight_sum = {t: 0.0 for t in teams}
  
-        eligible_games = games
-        if ovr_filter is not None:
-            eligible_games = [
-                (t1, t2, s1, s2) for t1, t2, s1, s2 in games
-                if abs((off_rating[t1] + def_rating[t1]) -
-                       (off_rating[t2] + def_rating[t2])) <= ovr_filter
-            ]
+        for t1, t2, actual_s1, actual_s2 in games:
+            gap = abs((off_rating[t1] + def_rating[t1]) -
+                      (off_rating[t2] + def_rating[t2]))
+            w = competitiveness_weight(gap)
  
-        for t1, t2, actual_s1, actual_s2 in eligible_games:
             predicted_s1 = off_rating[t1] - def_rating[t2] + league_avg
             predicted_s2 = off_rating[t2] - def_rating[t1] + league_avg
  
             error_s1 = actual_s1 - predicted_s1
             error_s2 = actual_s2 - predicted_s2
  
-            off_error[t1] += error_s1
-            off_error[t2] += error_s2
-            def_error[t1] += -error_s2
-            def_error[t2] += -error_s1
+            # MOV cap: bound the raw error before it's weighted/accumulated
+            error_s1 = max(-MOV_CAP, min(MOV_CAP, error_s1))
+            error_s2 = max(-MOV_CAP, min(MOV_CAP, error_s2))
  
-            games_played[t1] += 1
-            games_played[t2] += 1
+            off_error[t1] += w * error_s1
+            off_error[t2] += w * error_s2
+            def_error[t1] += -w * error_s2
+            def_error[t2] += -w * error_s1
+ 
+            weight_sum[t1] += w
+            weight_sum[t2] += w
  
         for team in teams:
-            if games_played[team] > 0:
-                off_rating[team] += (
-                    (off_error[team] / games_played[team]) * LEARNING_RATE
-                )
-                def_rating[team] += (
-                    (def_error[team] / games_played[team]) * LEARNING_RATE
-                )
+            # Shrinkage: denominator is (weighted games) + K, not just raw
+            # games played. Teams with low competitive weight get smaller,
+            # more conservative updates instead of being fully driven by
+            # 1-2 games.
+            denom = weight_sum[team] + REGULARIZATION_K
+            off_rating[team] += (off_error[team] / denom) * LEARNING_RATE
+            def_rating[team] += (def_error[team] / denom) * LEARNING_RATE
  
         if (iteration + 1) % 100 == 0:
-            eligible_count = (
-                len(eligible_games) if ovr_filter is not None else len(games)
-            )
-            print(
-                f"  [{phase_label}] Iteration {iteration + 1}/{iterations} complete"
-                + (f" | Competitive games: {eligible_count}" if ovr_filter else "")
-            )
+            print(f"  [{phase_label}] Iteration {iteration + 1}/{iterations} complete")
  
  
 def calculate_ratings(all_games, iterations=ITERATIONS):
@@ -675,20 +418,14 @@ def calculate_ratings(all_games, iterations=ITERATIONS):
     off_rating = {t: 0.0 for t in teams}
     def_rating = {t: 0.0 for t in teams}
  
-    print(f"\n  Running Phase 1 ({iterations} iterations, all games)...")
+    print(f"\n  Running rating fit ({iterations} iterations, soft-weighted "
+          f"by competitiveness [scale={COMPETITIVE_THRESHOLD}], "
+          f"shrinkage K={REGULARIZATION_K}, MOV cap={MOV_CAP})...")
     run_iterations(games, teams, off_rating, def_rating, league_avg,
-                   iterations=iterations, phase_label="Phase 1", ovr_filter=None)
- 
-    print(f"\n  Running Phase 2 ({iterations} iterations, "
-          f"competitive games within {COMPETITIVE_THRESHOLD} OVR pts)...")
-    run_iterations(games, teams, off_rating, def_rating, league_avg,
-                   iterations=iterations, phase_label="Phase 2",
-                   ovr_filter=COMPETITIVE_THRESHOLD)
+                   iterations=iterations, phase_label="Fit")
  
     ovr_rating = {t: round(off_rating[t] + def_rating[t], 2) for t in teams}
     return off_rating, def_rating, ovr_rating, league_avg
- 
- 
 # ---------------------------------------------------------------------------
 # JSON OUTPUT
 # ---------------------------------------------------------------------------
@@ -759,7 +496,7 @@ def save_class_jsons(off_rating, def_rating, ovr_rating, league_avg,
             print(f"  Class {cls}: no teams found — skipping.")
             continue
  
-        path = f"football_ratings_2011_class{cls}.json"
+        path = f"football_ratings_{SEASON_YEAR}_class{cls}.json"
         output = {
             "last_updated":   datetime.now().strftime("%B %d, %Y at %I:%M %p"),
             "league_average": round(league_avg, 2),
@@ -832,10 +569,10 @@ def save_rankings_csv(off_rating, def_rating, ovr_rating,
     ])
  
     if class_filter is None:
-        path  = "football_rankings_2011_all.csv"
+        path  = f"football_rankings_{SEASON_YEAR}_all.csv"
         label = "All teams"
     else:
-        path  = f"football_rankings_2011_class{class_filter}.csv"
+        path  = f"football_rankings_{SEASON_YEAR}_class{class_filter}.csv"
         label = f"Class {class_filter}"
  
     df.to_csv(path, index=False)
@@ -858,7 +595,7 @@ def save_all_rankings_csvs(off_rating, def_rating, ovr_rating,
 # ---------------------------------------------------------------------------
  
 if __name__ == "__main__":
-    print("=== MSHSAA Football Ratings 2011 ===")
+    print(f"=== MSHSAA Football Ratings {SEASON_YEAR} ===")
  
     print("\nLoading classifications...")
     team_to_class, team_to_district = load_classifications()
